@@ -3,16 +3,19 @@
 This package contains all the functions needed for the proper operation of the database, and all database interactions should be performed via functions provided by this package to ensure normalization of database data.
 
 ## Initialization
-Ensure the proper Atlas URL is first defined in `.env`.
+
+Ensure the proper Atlas URL is first defined in `.env` in the root folder.
 
 Before the use of any function, the dao must first establish a connection with the MongoDB database. This can be done by including the command `await dao.connectToServer();` in your code.
 
 Once the database is initialized, the console message `"Successfully connected to db!"` should appear. All functions can then be used.
+
 ## DB Schemas
 
-The following are the schemas for the database. Note that fields marked with a `?:` are optional.
+The following are the schemas for the database. Note that fields marked with a `?:` are optional. Also note that internally, these are handled by Mongoose documents. However, for convenience in this README, the schemas will be listed as `userSchema` and `eventSchema`.
 
 ### User Schema
+
 ```json
 {
     firstname: string,
@@ -24,28 +27,31 @@ The following are the schemas for the database. Note that fields marked with a `
     interests?: string[],
 }
 ```
+
 ### Event Schema
+
 ```json
 {
   id: number,
   name: string,
   date: Date,
   is_public: boolean,
-  participants: string[] // this will actually be a list of documents, once I figure out the typing lol
+  participants: userSchema[] // this will actually be a list of documents, once I figure out the typing lol
   description?: string,
   location?: string,
 }
 
 ```
 
-If you `require` the schema file, note that `dummyUser` and `dummyEvent` are provided for easy testing with already-formed objects.
+If you `require` the schema files, note that `dummyUser` and `dummyEvent` are provided for easy testing with already-formed objects.
 
 ## DB Functions
 
 The following are the functions provided by `dao.js`.
 
 ### User DB Functions
-`function addUser(user: userSchema) => boolean` 
+
+`function addUser(user: userSchema) => boolean`
 Adds a new user object to the mongoDB database.
 <br />
 <br />
@@ -66,7 +72,7 @@ Note that specifying a user that does not exist will return a `false`. Specifyin
 
 `function deleteUser(username: string) => boolean`
 Deletes a user from the mongoDB database.
- 
+
 Note that specifying a user that does not exist will return a `false`.
 <br />
 <br />
@@ -90,14 +96,14 @@ Given a substring, finds users with a username/name with the substring.
 
 `function addEvent(event: eventSchema) => boolean`
 Adds a new event to the mongoDB database.
- 
+
 The specified event must be in the form specified by the common event schema in schema.ts.
 <br />
 <br />
 
 `function addBasicEvent(name: string, date: string, isPublic: boolean) => boolean`
 Adds a new event object to the mongoDB database.
- 
+
 This will create a new event with only the required information. Useful if you don't want to make objects. Will also ensure the most recent schema is used.
 <br />
 <br />
