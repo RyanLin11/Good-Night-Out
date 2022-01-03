@@ -9,13 +9,15 @@ eventRoutes.route("/events/").get(async function (req, res) {
 	res.json(events);
 });
 
+// ID should be a ObjectID as a string, this will not look pretty
 eventRoutes.route("/events/:id").get(async function (req, res) {
 	const event = await db.events.getEvent(req.params.id);
 	res.json(event);
 });
 
+//! Not tested yet, addBasicEvent works
 eventRoutes.route("/events/add").post(async function (req, res) {
-	db.events.addBasicEvent(req.body.name, req.body.date, true);
+	db.events.addBasicEvent(req.body.name, true);
 });
 
 eventRoutes.route("/events/:id").delete(async function (req, res) {
