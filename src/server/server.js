@@ -16,9 +16,4 @@ app.listen(port, async () => {
 	console.log(`Server is now running on port ${port}`);
 
 	await db.conn.connectToDatabase();
-	// console.log(
-	// 	await db.users.addBasicUser("Testee", "McTestFace", "ihopethis-works", "eee@AAAAA.com")
-	// );
-	// console.log(await db.events.addBasicEvent("Cool event", false));
-	// console.log(mongoose.connection);
 });

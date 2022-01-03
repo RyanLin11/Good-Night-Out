@@ -14,6 +14,7 @@ const userDao = require("../models/user");
  * ! I don't know if this will update a user or create a new user. I will Update accordingly.
  */
 const addUser = async (userObj) => {
+	console.log(userObj);
 	const newUser = userDao.User({ ...userObj });
 	try {
 		await newUser.save();
