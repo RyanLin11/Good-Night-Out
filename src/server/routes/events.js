@@ -3,14 +3,13 @@ const eventRoutes = express.Router();
 const db = require("../db/dao");
 const { ObjectId } = require("mongodb");
 
-eventRoutes.route("/events/").get(async function (req, res) {
-	console.log("Hello there");
+eventRoutes.route("/api/events/").get(async function (req, res) {
 	const events = await db.events.findMatchingEvents("");
 	res.json(events);
 });
 
 // ID should be a ObjectID as a string, this will not look pretty
-eventRoutes.route("/events/:id").get(async function (req, res) {
+eventRoutes.route("/api/events/:id").get(async function (req, res) {
 	const event = await db.events.getEvent(req.params.id);
 	res.json(event);
 });
@@ -20,7 +19,7 @@ eventRoutes.route("/events/add").post(async function (req, res) {
 	db.events.addBasicEvent(req.body.name, true);
 });
 
-eventRoutes.route("/events/:id").delete(async function (req, res) {
+eventRoutes.route("/api/events/:id").delete(async function (req, res) {
 	console.log(`proceed to delete ${req.params.id} on server`);
 	const result = await db.events.deleteEvent(req.params.id);
 	console.log(result);
@@ -31,7 +30,7 @@ eventRoutes.route("/events/:id").delete(async function (req, res) {
 	}
 });
 
-eventRoutes.route("/event/:id/update").get(async function (req, res) {
+eventRoutes.route("/api/event/:id/update").get(async function (req, res) {
 	// await db.connectToServer();
 });
 

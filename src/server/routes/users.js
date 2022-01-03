@@ -3,7 +3,7 @@ const userRoutes = express.Router();
 const db = require("../db/dao");
 
 //! Not tested yet, no authentication currently
-userRoutes.route("/users/login/").post(async function (req, res) {
+userRoutes.route("/api/users/login/").post(async function (req, res) {
 	console.log("Logging in..");
 
 	//? What is the point of this?
@@ -23,7 +23,7 @@ userRoutes.route("/users/login/").post(async function (req, res) {
 	res.json(db_user);
 });
 
-userRoutes.route("/users/:name/").get(async function (req, res) {
+userRoutes.route("/api/users/:name/").get(async function (req, res) {
 	const user = await db.users.getUser(req.params.name);
 
 	res.json(user);
