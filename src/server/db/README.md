@@ -12,7 +12,7 @@ Once the database is initialized, the console message `"Successfully connected t
 
 ## DB Schemas
 
-The following are the schemas for the database. Note that fields marked with a `?:` are optional. Also note that internally, these are handled by Mongoose documents. However, for convenience in this README, the schemas will be listed as `userSchema` and `eventSchema`.
+The following are the schemas for the database. Note that fields marked with a `?:` are optional. Also note that internally, these are handled by Mongoose documents. However, for convenience in this README, the schemas will be referred to as `userSchema` and `eventSchema`. Likewise, if the return value is listed as `userSchema[]`, it will be a list of documents with the fields specified by `userSchema`.
 
 ### User Schema
 
@@ -94,6 +94,8 @@ Given a substring, finds users with a username/name with the substring.
 
 ### Event DB Functions
 
+Note that any fields specifying ObjectID refers to [BSON/MongoDB ObjectId](https://docs.mongodb.com/manual/reference/method/ObjectId/).
+
 `function addEvent(event: eventSchema) => boolean`
 Adds a new event to the mongoDB database.
 
@@ -101,33 +103,33 @@ The specified event must be in the form specified by the common event schema in 
 <br />
 <br />
 
-`function addBasicEvent(name: string, date: string, isPublic: boolean) => boolean`
+`function addBasicEvent(name: string, isPublic: boolean) => boolean`
 Adds a new event object to the mongoDB database.
 
 This will create a new event with only the required information. Useful if you don't want to make objects. Will also ensure the most recent schema is used.
 <br />
 <br />
 
-`function updateEvent(eventId: number, field: string, value: any) => boolean`
+`function updateEvent(eventId: ObjectID, field: string, value: any) => boolean`
 Updates a specific field from a specific event.
 
 Note that specifying a event that does not exist will return a `false`. Specifying a field that does not exist will also return a `false`.
 <br />
 <br />
 
-`function deleteEvent(eventId: number) => boolean`
+`function deleteEvent(eventId: ObjectID) => boolean`
 Deletes a event from the mongoDB database.
 
 Note that specifying a event that does not exist will return a `false`.
 <br />
 <br />
 
-`function getEvent(eventId: number) => eventSchema`
+`function getEvent(eventId: ObjectID) => eventSchema`
 Retrieves a event from the mongoDB database given a event's id.
 <br />
 <br />
 
-`function hasEvent(eventId: string) => boolean`
+`function hasEvent(eventId: ObjectID) => boolean`
 Determines if a event by the given event id exists.
 <br />
 <br />
