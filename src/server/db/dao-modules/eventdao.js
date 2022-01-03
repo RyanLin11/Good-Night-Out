@@ -1,4 +1,5 @@
 const eventDao = require("../models/event");
+const { getUser } = require("./userdao");
 
 /**
  * Adds a new event to the mongoDB database.
@@ -35,12 +36,14 @@ const addEvent = async (event) => {
  * Consider using {@link addEvent} if you need to add optional information for the event.
  *
  * @param name the name of the event.
+ * @param creator the document with the creator of the event.
  * @param isPublic whether the event is public or not.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-const addBasicEvent = async (name, isPublic) => {
+const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
+		creator: creator,
 		is_public: isPublic,
 	});
 
@@ -48,6 +51,37 @@ const addBasicEvent = async (name, isPublic) => {
 		await newEvent.save();
 
 		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
+ * Adds a new event object to the mongoDB database.
+ *
+ * This will create a new event with only the required information. Useful if you don't want to make objects. Will
+ * also ensure the most recent schema is used. Participants will be an empty list.
+ *
+ * Consider using {@link addEvent} if you need to add optional information for the event.
+ *
+ * This function accepts the username of the creator.
+ *
+ * @param name the name of the event.
+ * @param creator the username of the creator
+ * @param isPublic whether the event is public or not.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const addBasicEventUsername = async (name, username, isPublic) => {
+	try {
+		const user = await getUser(username);
+
+		if (user) {
+			return addBasicEvent(name, user, isPublic);
+		}
+
+		return false;
 	} catch (err) {
 		console.error(err);
 
@@ -184,6 +218,7 @@ const findMatchingEvents = async (searchString) => {
 
 exports.addEvent = addEvent;
 exports.addBasicEvent = addBasicEvent;
+exports.addBasicEventUsername = addBasicEventUsername;
 exports.updateEvent = updateEvent;
 exports.getEvent = getEvent;
 exports.getEventObj = getEventObj;

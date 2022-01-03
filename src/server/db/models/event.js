@@ -19,6 +19,10 @@ const eventSchema = new mongoose.Schema({
 		required: "Visibility settings must be specified!",
 		default: true,
 	},
+	creator: {
+		type: user.userSchema,
+		required: "The creator of the event must exist!",
+	},
 	date: Date,
 	participants: [user.userSchema],
 	description: {
