@@ -24,7 +24,7 @@ The following are the schemas for the database. Note that fields marked with a `
     email: string,
     about?: string,
     from?: string,
-    interests?: string[],
+    interests?: string[], // If none are specified, this will be an empty array.
 }
 ```
 
@@ -32,15 +32,13 @@ The following are the schemas for the database. Note that fields marked with a `
 
 ```json
 {
-  id: number,
   name: string,
-  date: Date,
   is_public: boolean,
-  participants: userSchema[] // this will actually be a list of documents, once I figure out the typing lol
+  date?: Date,
+  participants?: userSchema[], // If none are specified, this will be an empty array.
   description?: string,
   location?: string,
 }
-
 ```
 
 If you `require` the schema files, note that `dummyUser` and `dummyEvent` are provided for easy testing with already-formed objects.
@@ -79,6 +77,15 @@ Note that specifying a user that does not exist will return a `false`.
 
 `function getUser(username: string) => userSchema`
 Retrieves a user from the mongoDB database given a username.
+
+This will return a mongoose document with the `userSchema` schema.
+<br />
+<br />
+
+`function getUserObj(username: string) => Object`
+Retrieves a user from the mongoDB database given a username as a vanilla JS object.
+
+This will return a vanilla JS object with the same fields as the `userSchema` schema.
 <br />
 <br />
 
@@ -110,27 +117,46 @@ This will create a new event with only the required information. Useful if you d
 <br />
 <br />
 
-`function updateEvent(eventId: ObjectID, field: string, value: any) => boolean`
+`function updateEvent(eventId: string, field: string, value: any) => boolean`
 Updates a specific field from a specific event.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
 Note that specifying a event that does not exist will return a `false`. Specifying a field that does not exist will also return a `false`.
 <br />
 <br />
 
-`function deleteEvent(eventId: ObjectID) => boolean`
+`function deleteEvent(eventId: string) => boolean`
 Deletes a event from the mongoDB database.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
 Note that specifying a event that does not exist will return a `false`.
 <br />
 <br />
 
-`function getEvent(eventId: ObjectID) => eventSchema`
+`function getEvent(eventId: string) => eventSchema`
 Retrieves a event from the mongoDB database given a event's id.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+
+This will return a mongoose document with the `eventSchema` schema.
 <br />
 <br />
 
-`function hasEvent(eventId: ObjectID) => boolean`
+`function getEventObj(eventId: string) => Object`
+Retrieves a event from the mongoDB database given a event's id as a vanilla JS object.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+
+This will return a vanilla JS object with the same fields as the `eventSchema` schema.
+<br />
+<br />
+
+`function hasEvent(eventId: string) => boolean`
 Determines if a event by the given event id exists.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 <br />
 <br />
 
