@@ -64,7 +64,7 @@ const addBasicEvent = async (name, isPublic) => {
  * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
  * ! using this function if you are, though. The parameter might change.
  *
- * @param eventId the event's `ObjectId`.
+ * @param eventId the event's `ObjectId` string.
  * @param field the field to be updated.
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
@@ -89,7 +89,7 @@ const updateEvent = async (eventId, field, value) => {
  *
  * Note that specifying a event that does not exist will return a `false`.
  *
- * @param eventId the event's `ObjectId`.
+ * @param eventId the event's `ObjectId` string.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
 const deleteEvent = async (eventId) => {
@@ -107,12 +107,32 @@ const deleteEvent = async (eventId) => {
 /**
  * Retrieves a event from the mongoDB database given a event's id.
  *
- * @param eventId the `ObjectId` for the event.
- * @returns the event, or `null` if one cannot be found.
+ * @param eventId the `ObjectId` string for the event.
+ * @returns a document with the event, or `null` if one cannot be found.
  */
 const getEvent = async (eventId) => {
 	try {
 		const desiredEvent = await eventDao.Event.findById(eventId).exec();
+
+		return desiredEvent;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves a event from the mongoDB database given a event's id as a vanilla JS object.
+ *
+ * The event will have the same fields, but will be returned as a vanilla object.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @returns the event object, or `null` if one cannot be found.
+ */
+const getEventObj = async (username) => {
+	try {
+		const desiredEvent = await eventDao.Event.findById(eventId).lean().exec();
 
 		return desiredEvent;
 	} catch (err) {
@@ -129,7 +149,7 @@ const getEvent = async (eventId) => {
  * function multiple times. To improve efficiency, consider using {@link getEvent}
  * and checking if the result is `null`, instead.
  *
- * @param eventId the ObjectId of this event.
+ * @param eventId the `ObjectId` string of this event.
  * @returns a boolean, true if the event exists and false otherwise.
  */
 const hasEvent = async (eventId) => {
@@ -166,5 +186,6 @@ exports.addEvent = addEvent;
 exports.addBasicEvent = addBasicEvent;
 exports.updateEvent = updateEvent;
 exports.getEvent = getEvent;
+exports.getEventObj = getEventObj;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

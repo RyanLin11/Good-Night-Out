@@ -15,6 +15,7 @@ const userDao = require("../models/user");
  */
 const addUser = async (userObj) => {
 	const newUser = userDao.User({ ...userObj });
+
 	try {
 		await newUser.save();
 
@@ -75,7 +76,9 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  */
 const updateUser = async (username, field, value) => {
 	try {
-		const userToUpdate = await userDao.User.findOne({ username: username }).exec();
+		const userToUpdate = await userDao.User.findOne({
+			username: username,
+		}).exec();
 
 		userToUpdate.field = value;
 		userToUpdate.save();
@@ -114,11 +117,33 @@ const deleteUser = async (username) => {
  * Retrieves a user from the mongoDB database given a username.
  *
  * @param username the username of the user to find.
- * @returns the user, or `null` if one cannot be found.
+ * @returns the document with the user, or `null` if one cannot be found.
  */
 const getUser = async (username) => {
 	try {
-		const desiredUser = await userDao.User.findOne({ username: username }).exec();
+		const desiredUser = await userDao.User.findOne({
+			username: username,
+		}).exec();
+
+		return desiredUser;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves a user from the mongoDB database given a username as a vanilla JS object.
+ *
+ * The user will have the same fields, but will be returned as a vanilla object.
+ *
+ * @param username the username of the user to find.
+ * @returns the user object, or `null` if one cannot be found.
+ */
+const getUserObj = async (username) => {
+	try {
+		const desiredUser = await userDao.User.findOne({ username: username }).lean().exec();
 
 		return desiredUser;
 	} catch (err) {
@@ -172,5 +197,6 @@ exports.addUser = addUser;
 exports.addBasicUser = addBasicUser;
 exports.updateUser = updateUser;
 exports.getUser = getUser;
+exports.getUserObj = getUserObj;
 exports.hasUser = hasUser;
 exports.findMatchingUsers = findMatchingUsers;
