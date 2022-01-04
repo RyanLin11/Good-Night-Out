@@ -15,8 +15,8 @@ eventRoutes.route("/api/events/:id").get(async function (req, res) {
 });
 
 //! Not tested yet, addBasicEvent works
-eventRoutes.route("/events/add").post(async function (req, res) {
-	db.events.addBasicEvent(req.body.name, true);
+eventRoutes.route("/api/events/add").post(async function (req, res) {
+	res.json(await db.events.addBasicEventUsername(req.body.name, req.body.username, true));
 });
 
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {

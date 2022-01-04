@@ -75,7 +75,6 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-//TODO:TEST
 const updateUser = async (username, field, value) => {
 	try {
 		const userToUpdate = await userDao.User.findOne({
@@ -123,7 +122,6 @@ const deleteUser = async (username) => {
  * @param username the username of the user to find.
  * @returns the document with the user, or `null` if one cannot be found.
  */
-//TODO:TEST
 const getUser = async (username) => {
 	try {
 		const desiredUser = await userDao.User.findOne({
@@ -184,7 +182,6 @@ const hasUser = async (username) => {
  * @param username the username of the user to find.
  * @returns a list of event IDs, or `null` if an something wrong happened.
  */
-//TODO:TEST
 const getParticipatingIn = async (username) => {
 	try {
 		const desiredEvents = await userDao.User.findOne({ username: username })
@@ -206,12 +203,11 @@ const getParticipatingIn = async (username) => {
  * @param username the username of the user to find.
  * @returns a list of event IDs, or `null` if an something wrong happened.
  */
-//TODO:TEST
 const getCreatedEvents = async (username) => {
 	try {
 		const user = await getUser(username);
 
-		await eventDao.Event.find({ creator: user._id }).exec();
+		return await eventDao.Event.find({ creator: user._id }).exec();
 	} catch (err) {
 		console.error(err);
 

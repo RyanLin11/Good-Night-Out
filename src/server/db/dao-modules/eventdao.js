@@ -41,7 +41,6 @@ const addEvent = async (event) => {
  * @param isPublic whether the event is public or not.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-//TODO:TEST
 const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
@@ -75,7 +74,6 @@ const addBasicEvent = async (name, creator, isPublic) => {
  * @param isPublic whether the event is public or not.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-//TODO:TEST
 const addBasicEventUsername = async (name, username, isPublic) => {
 	try {
 		const user = await getUser(username);
@@ -151,7 +149,6 @@ const deleteEvent = async (eventId) => {
  * @param eventId the `ObjectId` string for the event.
  * @returns a document with the event, or `null` if one cannot be found.
  */
-//TODO:TEST
 const getEvent = async (eventId) => {
 	try {
 		const desiredEvent = await eventDao.Event.findById(eventId)
@@ -216,7 +213,6 @@ const hasEvent = async (eventId) => {
  * @param searchString a string containing a substring to look for in events.
  * @returns a list of documents of type `eventSchema` containing potential event matches.
  */
-//TODO:TEST
 const findMatchingEvents = async (searchString) => {
 	try {
 		const events = await eventDao.Event.find({
