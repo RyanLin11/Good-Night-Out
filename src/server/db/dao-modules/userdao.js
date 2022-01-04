@@ -80,8 +80,8 @@ const updateUser = async (username, field, value) => {
 			username: username,
 		}).exec();
 
-		userToUpdate.field = value;
-		userToUpdate.save();
+		userToUpdate[field] = value;
+		await userToUpdate.save();
 
 		return true;
 	} catch (err) {

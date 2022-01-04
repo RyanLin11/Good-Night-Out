@@ -24,7 +24,7 @@ const db = require("../db/dao");
 // 	res.json(db_user);
 // });
 
-userRoutes.route("/api/users/add").post(async function (req, res) {
+userRoutes.route("/api/users").post(async function (req, res) {
 	let db_user = await db.users.getUser(req.body.username);
 	if (db_user == null) {
 		await db.users.addBasicUser(
@@ -45,6 +45,18 @@ userRoutes.route("/api/users/:name/").get(async function (req, res) {
 	const user = await db.users.getUser(req.params.name);
 
 	res.json(user);
+});
+
+userRoutes.route("/api/users/:name").patch(async function (req, res) {
+	const success = await db.users.updateUser(req.body.username, req.body.field, req.body.value);
+	let db_user = null;
+
+	if (success) {
+		db_user = await db.users.getUser(req.body.username);
+	}
+
+	// if it failed, return an empty object
+	res.json(db_user ? db_user : {});
 });
 
 // Gets the events that this user is participating in
