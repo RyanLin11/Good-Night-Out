@@ -24,7 +24,7 @@ const eventSchema = new mongoose.Schema({
 		required: "The creator of the event must exist!",
 	},
 	date: Date,
-	participants: [users.userSchema],
+	participants: [String],
 	description: {
 		type: String,
 		trim: true,

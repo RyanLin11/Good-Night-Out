@@ -26,7 +26,6 @@ The following are the schemas for the database. Note that fields marked with a `
     from?: string,
     interests?: string[], // If none are specified, this will be an empty array.
     participatingIn?: string[], // If none are specified, this will be an empty array.
-    createdEvents?: string[], // If none are specified, this will be an empty array.
 }
 ```
 
@@ -38,9 +37,9 @@ The following are the schemas for the database. Note that fields marked with a `
   is_public: boolean,
   creator: userSchema,
   date?: Date,
-  participants?: userSchema[], // If none are specified, this will be an empty array.
   description?: string,
   location?: string,
+  participants?: string[], // If none are specified, this will be an empty array.
 }
 ```
 
