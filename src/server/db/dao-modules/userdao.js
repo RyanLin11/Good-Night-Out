@@ -199,7 +199,7 @@ const getCreatedEvents = async (username) => {
 			.select("createdEvents")
 			.exec();
 
-		return desiredEvents.participatingIn;
+		return desiredEvents.createdEvents;
 	} catch (err) {
 		console.error(err);
 
