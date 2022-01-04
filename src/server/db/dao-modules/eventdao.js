@@ -1,3 +1,4 @@
+const { users } = require("../dao");
 const eventDao = require("../models/event");
 const { getUser } = require("./userdao");
 
@@ -43,7 +44,7 @@ const addEvent = async (event) => {
 const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
-		creator: creator,
+		creator: creator._id,
 		is_public: isPublic,
 	});
 
@@ -103,9 +104,13 @@ const addBasicEventUsername = async (name, username, isPublic) => {
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
+//TODO:TEST
 const updateEvent = async (eventId, field, value) => {
 	try {
-		const eventToUpdate = await eventDao.Event.findById(eventId).exec();
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
 
 		eventToUpdate.field = value;
 		eventToUpdate.save();
@@ -146,7 +151,10 @@ const deleteEvent = async (eventId) => {
  */
 const getEvent = async (eventId) => {
 	try {
-		const desiredEvent = await eventDao.Event.findById(eventId).exec();
+		const desiredEvent = await eventDao.Event.findById(eventId)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
+			.exec();
 
 		return desiredEvent;
 	} catch (err) {
@@ -164,9 +172,14 @@ const getEvent = async (eventId) => {
  * @param eventId the `ObjectId` string for the event.
  * @returns the event object, or `null` if one cannot be found.
  */
+//TODO:TEST
 const getEventObj = async (username) => {
 	try {
-		const desiredEvent = await eventDao.Event.findById(eventId).lean().exec();
+		const desiredEvent = await eventDao.Event.findById(eventId)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
+			.lean()
+			.exec();
 
 		return desiredEvent;
 	} catch (err) {
@@ -206,6 +219,8 @@ const findMatchingEvents = async (searchString) => {
 			username: { $regex: searchString, $options: "i" },
 		})
 			.limit(10)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
 			.exec();
 
 		return events;

@@ -36,8 +36,7 @@ const userSchema = mongoose.Schema({
 		trim: true,
 	},
 	interests: [String],
-	participatingIn: [String],
-	createdEvents: [String],
+	participatingIn: [{ type: mongoose.Types.ObjectId, ref: "Event" }],
 });
 
 // for debug, will not be stored on db, prints out event details for debug

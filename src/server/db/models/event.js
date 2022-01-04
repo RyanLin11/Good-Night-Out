@@ -20,11 +20,12 @@ const eventSchema = new mongoose.Schema({
 		default: true,
 	},
 	creator: {
-		type: users.userSchema,
+		type: mongoose.Types.ObjectId,
+		ref: "User",
 		required: "The creator of the event must exist!",
 	},
 	date: Date,
-	participants: [users.userSchema],
+	participants: [{ type: mongoose.Types.ObjectId, ref: "User" }],
 	description: {
 		type: String,
 		trim: true,

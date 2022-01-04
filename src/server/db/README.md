@@ -14,6 +14,8 @@ Once the database is initialized, the console message `"Successfully connected t
 
 The following are the schemas for the database. Note that fields marked with a `?:` are optional. Also note that internally, these are handled by Mongoose documents. However, for convenience in this README, the schemas will be referred to as `userSchema` and `eventSchema`. Likewise, if the return value is listed as `userSchema[]`, it will be a list of documents with the fields specified by `userSchema`.
 
+Note that `eventSchema (ref)` will be missing `participants?`, and `userSchema (ref)` will be missing `participatingIn?` and `interests?`.
+
 ### User Schema
 
 ```json
@@ -25,8 +27,7 @@ The following are the schemas for the database. Note that fields marked with a `
     about?: string,
     from?: string,
     interests?: string[], // If none are specified, this will be an empty array.
-    participatingIn?: string[], // If none are specified, this will be an empty array.
-    createdEvents?: string[], // If none are specified, this will be an empty array.
+    participatingIn?: eventSchema (ref) [], // If none are specified, this will be an empty array.
 }
 ```
 
@@ -36,11 +37,11 @@ The following are the schemas for the database. Note that fields marked with a `
 {
   name: string,
   is_public: boolean,
-  creator: userSchema,
+  creator: userSchema (ref),
   date?: Date,
-  participants?: userSchema[], // If none are specified, this will be an empty array.
   description?: string,
   location?: string,
+  participants?: userSchema (ref)[], // If none are specified, this will be an empty array.
 }
 ```
 
@@ -54,6 +55,8 @@ The following are the functions provided by `dao.js`.
 
 `function addUser(user: userSchema) => boolean`
 Adds a new user object to the mongoDB database.
+
+The user parameter must be in the form dictated by `userSchema`, and must be a vanilla JS object.
 <br />
 <br />
 
@@ -109,14 +112,23 @@ Note that any fields specifying ObjectID refers to [BSON/MongoDB ObjectId](https
 `function addEvent(event: eventSchema) => boolean`
 Adds a new event to the mongoDB database.
 
-The specified event must be in the form specified by the common event schema in schema.ts.
+The specified event must be in the form specified by the common event schema in schema.ts. It must be a vanilla JS object.
 <br />
 <br />
 
-`function addBasicEvent(name: string, isPublic: boolean) => boolean`
+`function addBasicEvent(name: string, creator: userSchema, isPublic: boolean) => boolean`
 Adds a new event object to the mongoDB database.
 
 This will create a new event with only the required information. Useful if you don't want to make objects. Will also ensure the most recent schema is used.
+
+Creator must be a `mongoose.document` with the `userSchema` as its schema.
+<br />
+<br />
+
+`function addBasicEventUsername(name: string, creator: string, isPublic: boolean) => boolean`
+Adds a new event object to the mongoDB database.
+
+The only difference between this and `addBasicEvent` is that this accepts a username for creator.
 <br />
 <br />
 
