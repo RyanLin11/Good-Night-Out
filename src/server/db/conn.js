@@ -38,6 +38,11 @@ const connectToDatabase = async () => {
  *
  * Note: {@link connectToDatabase} should be run first.
  *
+ * @deprecated
+ * The function {@link connectToDatabase} will establish a default connection
+ * to the database, and the database can then be accessed by simply importing
+ * the `User` and `Event` models.
+ *
  * @returns a promise with the current working db, if initialized.
  */
 const getDb = async () => {

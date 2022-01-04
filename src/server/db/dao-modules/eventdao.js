@@ -1,4 +1,6 @@
+const { users } = require("../dao");
 const eventDao = require("../models/event");
+const { getUser } = require("./userdao");
 
 /**
  * Adds a new event to the mongoDB database.
@@ -35,13 +37,14 @@ const addEvent = async (event) => {
  * Consider using {@link addEvent} if you need to add optional information for the event.
  *
  * @param name the name of the event.
+ * @param creator the document with the creator of the event.
  * @param isPublic whether the event is public or not.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-const addBasicEvent = async (name, date, isPublic) => {
+const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
-    date,
+		creator: creator._id,
 		is_public: isPublic,
 	});
 
@@ -49,6 +52,37 @@ const addBasicEvent = async (name, date, isPublic) => {
 		await newEvent.save();
 
 		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
+ * Adds a new event object to the mongoDB database.
+ *
+ * This will create a new event with only the required information. Useful if you don't want to make objects. Will
+ * also ensure the most recent schema is used. Participants will be an empty list.
+ *
+ * Consider using {@link addEvent} if you need to add optional information for the event.
+ *
+ * This function accepts the username of the creator.
+ *
+ * @param name the name of the event.
+ * @param creator the username of the creator
+ * @param isPublic whether the event is public or not.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const addBasicEventUsername = async (name, username, isPublic) => {
+	try {
+		const user = await getUser(username);
+
+		if (user) {
+			return addBasicEvent(name, user, isPublic);
+		}
+
+		return false;
 	} catch (err) {
 		console.error(err);
 
@@ -65,14 +99,18 @@ const addBasicEvent = async (name, date, isPublic) => {
  * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
  * ! using this function if you are, though. The parameter might change.
  *
- * @param eventId the event's `ObjectId`.
+ * @param eventId the event's `ObjectId` string.
  * @param field the field to be updated.
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
+//TODO:TEST
 const updateEvent = async (eventId, field, value) => {
 	try {
-		const eventToUpdate = await eventDao.Event.findById(eventId).exec();
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
 
 		eventToUpdate.field = value;
 		eventToUpdate.save();
@@ -90,7 +128,7 @@ const updateEvent = async (eventId, field, value) => {
  *
  * Note that specifying a event that does not exist will return a `false`.
  *
- * @param eventId the event's `ObjectId`.
+ * @param eventId the event's `ObjectId` string.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
 const deleteEvent = async (eventId) => {
@@ -108,12 +146,40 @@ const deleteEvent = async (eventId) => {
 /**
  * Retrieves a event from the mongoDB database given a event's id.
  *
- * @param eventId the `ObjectId` for the event.
- * @returns the event, or `null` if one cannot be found.
+ * @param eventId the `ObjectId` string for the event.
+ * @returns a document with the event, or `null` if one cannot be found.
  */
 const getEvent = async (eventId) => {
 	try {
-		const desiredEvent = await eventDao.Event.findById(eventId).exec();
+		const desiredEvent = await eventDao.Event.findById(eventId)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
+			.exec();
+
+		return desiredEvent;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves a event from the mongoDB database given a event's id as a vanilla JS object.
+ *
+ * The event will have the same fields, but will be returned as a vanilla object.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @returns the event object, or `null` if one cannot be found.
+ */
+//TODO:TEST
+const getEventObj = async (username) => {
+	try {
+		const desiredEvent = await eventDao.Event.findById(eventId)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
+			.lean()
+			.exec();
 
 		return desiredEvent;
 	} catch (err) {
@@ -130,7 +196,7 @@ const getEvent = async (eventId) => {
  * function multiple times. To improve efficiency, consider using {@link getEvent}
  * and checking if the result is `null`, instead.
  *
- * @param eventId the ObjectId of this event.
+ * @param eventId the `ObjectId` string of this event.
  * @returns a boolean, true if the event exists and false otherwise.
  */
 const hasEvent = async (eventId) => {
@@ -153,6 +219,8 @@ const findMatchingEvents = async (searchString) => {
 			username: { $regex: searchString, $options: "i" },
 		})
 			.limit(10)
+			.populate("creator", ["-participatingIn", "-interests"])
+			.populate("participants", ["-participatingIn", "-interests"])
 			.exec();
 
 		return events;
@@ -166,7 +234,9 @@ const findMatchingEvents = async (searchString) => {
 exports.addEvent = addEvent;
 exports.deleteEvent = deleteEvent;
 exports.addBasicEvent = addBasicEvent;
+exports.addBasicEventUsername = addBasicEventUsername;
 exports.updateEvent = updateEvent;
 exports.getEvent = getEvent;
+exports.getEventObj = getEventObj;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

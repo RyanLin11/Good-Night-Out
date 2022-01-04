@@ -1,4 +1,5 @@
 const userDao = require("../models/user");
+const eventDao = require("../models/event");
 
 /**
  * Adds a new user object to the mongoDB database.
@@ -15,6 +16,7 @@ const userDao = require("../models/user");
  */
 const addUser = async (userObj) => {
 	const newUser = userDao.User({ ...userObj });
+
 	try {
 		await newUser.save();
 
@@ -75,10 +77,14 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  */
 const updateUser = async (username, field, value) => {
 	try {
-		const userToUpdate = await userDao.User.findOne({ username: username }).exec();
+		const userToUpdate = await userDao.User.findOne({
+			username: username,
+		})
+			.populate("participatingIn")
+			.exec();
 
-		userToUpdate.field = value;
-		userToUpdate.save();
+		userToUpdate[field] = value;
+		await userToUpdate.save();
 
 		return true;
 	} catch (err) {
@@ -114,11 +120,39 @@ const deleteUser = async (username) => {
  * Retrieves a user from the mongoDB database given a username.
  *
  * @param username the username of the user to find.
- * @returns the user, or `null` if one cannot be found.
+ * @returns the document with the user, or `null` if one cannot be found.
  */
 const getUser = async (username) => {
 	try {
-		const desiredUser = await userDao.User.findOne({ username: username }).exec();
+		const desiredUser = await userDao.User.findOne({
+			username: username,
+		})
+			.populate("participatingIn", ["-participants"])
+			.exec();
+
+		return desiredUser;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves a user from the mongoDB database given a username as a vanilla JS object.
+ *
+ * The user will have the same fields, but will be returned as a vanilla object.
+ *
+ * @param username the username of the user to find.
+ * @returns the user object, or `null` if one cannot be found.
+ */
+//TODO:TEST
+const getUserObj = async (username) => {
+	try {
+		const desiredUser = await userDao.User.findOne({ username: username })
+			.populate("participatingIn", ["-participants"])
+			.lean()
+			.exec();
 
 		return desiredUser;
 	} catch (err) {
@@ -143,6 +177,45 @@ const hasUser = async (username) => {
 };
 
 /**
+ * Retrieves all the events that this user is participating in.
+ *
+ * @param username the username of the user to find.
+ * @returns a list of event IDs, or `null` if an something wrong happened.
+ */
+const getParticipatingIn = async (username) => {
+	try {
+		const desiredEvents = await userDao.User.findOne({ username: username })
+			.populate("participatingIn", ["-participants"])
+			.select("participatingIn")
+			.exec();
+
+		return desiredEvents.participatingIn;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves all the events that this user created.
+ *
+ * @param username the username of the user to find.
+ * @returns a list of event IDs, or `null` if an something wrong happened.
+ */
+const getCreatedEvents = async (username) => {
+	try {
+		const user = await getUser(username);
+
+		return await eventDao.Event.find({ creator: user._id }).exec();
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
  * Given a substring, finds users with a username/name with the substring.
  *
  * Technically, the provided `searchString` may be regex. However, noticeable
@@ -152,12 +225,14 @@ const hasUser = async (username) => {
  * @param searchString a string containing a substring to look for in users.
  * @returns a list of documents of type `userSchema` containing potential user matches.
  */
+//TODO:TEST
 const findMatchingUsers = async (searchString) => {
 	try {
 		const desiredUsers = await userDao.User.find({
 			username: { $regex: searchString, $options: "i" },
 		})
 			.limit(10)
+			.populate("participatingIn", ["-participants"])
 			.exec();
 
 		return desiredUsers;
@@ -172,5 +247,8 @@ exports.addUser = addUser;
 exports.addBasicUser = addBasicUser;
 exports.updateUser = updateUser;
 exports.getUser = getUser;
+exports.getUserObj = getUserObj;
+exports.getParticipatingIn = getParticipatingIn;
+exports.getCreatedEvents = getCreatedEvents;
 exports.hasUser = hasUser;
 exports.findMatchingUsers = findMatchingUsers;
