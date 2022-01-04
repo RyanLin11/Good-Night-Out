@@ -36,6 +36,8 @@ const userSchema = mongoose.Schema({
 		trim: true,
 	},
 	interests: [String],
+	participatingIn: [String],
+	createdEvents: [String],
 });
 
 // for debug, will not be stored on db, prints out event details for debug
@@ -56,5 +58,4 @@ const dummyUser = {
 };
 
 exports.userSchema = userSchema;
-exports.dummyUser = dummyUser;
 exports.User = User;

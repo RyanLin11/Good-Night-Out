@@ -168,6 +168,46 @@ const hasUser = async (username) => {
 };
 
 /**
+ * Retrieves all the events that this user is participating in.
+ *
+ * @param username the username of the user to find.
+ * @returns a list of event IDs, or `null` if an something wrong happened.
+ */
+const getParticipatingIn = async (username) => {
+	try {
+		const desiredEvents = await userDao.User.findOne({ username: username })
+			.select("participatingIn")
+			.exec();
+
+		return desiredEvents.participatingIn;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves all the events that this user created.
+ *
+ * @param username the username of the user to find.
+ * @returns a list of event IDs, or `null` if an something wrong happened.
+ */
+const getCreatedEvents = async (username) => {
+	try {
+		const desiredEvents = await userDao.User.findOne({ username: username })
+			.select("createdEvents")
+			.exec();
+
+		return desiredEvents.participatingIn;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
  * Given a substring, finds users with a username/name with the substring.
  *
  * Technically, the provided `searchString` may be regex. However, noticeable
@@ -198,5 +238,7 @@ exports.addBasicUser = addBasicUser;
 exports.updateUser = updateUser;
 exports.getUser = getUser;
 exports.getUserObj = getUserObj;
+exports.getParticipatingIn = getParticipatingIn;
+exports.getCreatedEvents = getCreatedEvents;
 exports.hasUser = hasUser;
 exports.findMatchingUsers = findMatchingUsers;

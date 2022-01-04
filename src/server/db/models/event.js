@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const user = require("./user");
+const users = require("./user");
 
 /**
  * The default schema for an event object.
@@ -20,11 +20,11 @@ const eventSchema = new mongoose.Schema({
 		default: true,
 	},
 	creator: {
-		type: user.userSchema,
+		type: users.userSchema,
 		required: "The creator of the event must exist!",
 	},
 	date: Date,
-	participants: [user.userSchema],
+	participants: [users.userSchema],
 	description: {
 		type: String,
 		trim: true,
@@ -42,16 +42,5 @@ eventSchema.virtual("details").get(function () {
 
 const Event = mongoose.model("Event", eventSchema);
 
-/**
- * A dummy event for testing. Holds only the required fields.
- */
-const dummyEvent = {
-	name: "cool",
-	date: new Date(),
-	is_public: true,
-	participants: [],
-};
-
 exports.eventSchema = eventSchema;
-exports.dummyEvent = dummyEvent;
 exports.Event = Event;
