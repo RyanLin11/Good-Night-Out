@@ -1,4 +1,5 @@
 const userDao = require("../models/user");
+const eventDao = require("../models/event");
 
 /**
  * Adds a new user object to the mongoDB database.
@@ -74,11 +75,14 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
+//TODO:TEST
 const updateUser = async (username, field, value) => {
 	try {
 		const userToUpdate = await userDao.User.findOne({
 			username: username,
-		}).exec();
+		})
+			.populate("participatingIn")
+			.exec();
 
 		userToUpdate[field] = value;
 		await userToUpdate.save();
@@ -119,11 +123,14 @@ const deleteUser = async (username) => {
  * @param username the username of the user to find.
  * @returns the document with the user, or `null` if one cannot be found.
  */
+//TODO:TEST
 const getUser = async (username) => {
 	try {
 		const desiredUser = await userDao.User.findOne({
 			username: username,
-		}).exec();
+		})
+			.populate("participatingIn", ["-participants"])
+			.exec();
 
 		return desiredUser;
 	} catch (err) {
@@ -141,9 +148,13 @@ const getUser = async (username) => {
  * @param username the username of the user to find.
  * @returns the user object, or `null` if one cannot be found.
  */
+//TODO:TEST
 const getUserObj = async (username) => {
 	try {
-		const desiredUser = await userDao.User.findOne({ username: username }).lean().exec();
+		const desiredUser = await userDao.User.findOne({ username: username })
+			.populate("participatingIn", ["-participants"])
+			.lean()
+			.exec();
 
 		return desiredUser;
 	} catch (err) {
@@ -173,9 +184,11 @@ const hasUser = async (username) => {
  * @param username the username of the user to find.
  * @returns a list of event IDs, or `null` if an something wrong happened.
  */
+//TODO:TEST
 const getParticipatingIn = async (username) => {
 	try {
 		const desiredEvents = await userDao.User.findOne({ username: username })
+			.populate("participatingIn", ["-participants"])
 			.select("participatingIn")
 			.exec();
 
@@ -193,13 +206,12 @@ const getParticipatingIn = async (username) => {
  * @param username the username of the user to find.
  * @returns a list of event IDs, or `null` if an something wrong happened.
  */
+//TODO:TEST
 const getCreatedEvents = async (username) => {
 	try {
-		const desiredEvents = await userDao.User.findOne({ username: username })
-			.select("createdEvents")
-			.exec();
+		const user = await getUser(username);
 
-		return desiredEvents.createdEvents;
+		await eventDao.Event.find({ creator: user._id }).exec();
 	} catch (err) {
 		console.error(err);
 
@@ -217,12 +229,14 @@ const getCreatedEvents = async (username) => {
  * @param searchString a string containing a substring to look for in users.
  * @returns a list of documents of type `userSchema` containing potential user matches.
  */
+//TODO:TEST
 const findMatchingUsers = async (searchString) => {
 	try {
 		const desiredUsers = await userDao.User.find({
 			username: { $regex: searchString, $options: "i" },
 		})
 			.limit(10)
+			.populate("participatingIn", ["-participants"])
 			.exec();
 
 		return desiredUsers;
