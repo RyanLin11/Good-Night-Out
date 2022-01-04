@@ -37,9 +37,16 @@ const deleteEvent = async (eventId) => {
   window.location.reload();
 };
 
+const getAllEvents = async () => {
+  const response = await fetch("/api/events/");
+  const body = await response.json();
+  return body;
+};
+
 export default {
   addEvent,
   searchEvents,
   joinEvent,
   deleteEvent,
+  getAllEvents
 };

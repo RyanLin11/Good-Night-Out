@@ -13,15 +13,7 @@ function Events() {
   const [showAddEvent, toggleAddEvent] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("/events/");
-      const body = await response.json();
-      if (response.status !== 200) {
-        throw Error(body);
-      }
-      return body
-    };
-    fetchData().then((data) => {
+    api.getAllEvents().then((data) => {
       setUserEvents(data)
     }).catch((e) => {
       console.log(e)
