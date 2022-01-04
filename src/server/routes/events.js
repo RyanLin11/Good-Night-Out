@@ -14,9 +14,17 @@ eventRoutes.route("/api/events/:id").get(async function (req, res) {
 	res.json(event);
 });
 
-//! Not tested yet, addBasicEvent works
-eventRoutes.route("/events/add").post(async function (req, res) {
-	db.events.addBasicEvent(req.body.name, true);
+//! not tested yet
+eventRoutes.route("/api/events/:id").patch(async function (req, res) {
+	const success = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
+	let db_event = null;
+
+	if (success) {
+		db_event = await db.events.getEvent(req.params.id);
+	}
+
+	// if it failed, return an empty object
+	res.json(db_event ? db_event : {});
 });
 
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {
@@ -28,10 +36,6 @@ eventRoutes.route("/api/events/:id").delete(async function (req, res) {
 	} else {
 		return "Event does not exist.";
 	}
-});
-
-eventRoutes.route("/api/event/:id/update").get(async function (req, res) {
-	// await db.connectToServer();
 });
 
 module.exports = eventRoutes;

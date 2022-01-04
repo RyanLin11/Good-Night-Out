@@ -73,4 +73,16 @@ userRoutes.route("/api/users/:name/events").get(async function (req, res) {
 	res.json(items);
 });
 
+// this user created a new event
+//TODO: test
+userRoutes.route("/api/users/:name/events").post(async function (req, res) {
+	const success = await db.events.addBasicEventUsername(
+		req.body.name,
+		req.params.name,
+		req.body.is_public
+	);
+
+	return success ? await db.events.getEvent(req.params.name) : {};
+});
+
 module.exports = userRoutes;
