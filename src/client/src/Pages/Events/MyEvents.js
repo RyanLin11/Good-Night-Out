@@ -4,17 +4,17 @@ import { Link } from "react-router-dom";
 import NavBar from "../../components/navbar/NavBar";
 import Event from "./Event.js";
 import "../css/Events.css";
+import api from './events-api-calls/calls.js'
+
 
 function MyEvents() {
   const [myEvents, setMyEvents] = useState(null);
 
-  useEffect(async () => {
-    const response = await fetch("/users/:id/events/");
-    const body = await response.json();
-    if (response.status !== 200) {
-      throw Error(body.error);
-    }
-    setMyEvents(body.events);
+  useEffect(() => {
+    api.getMyEvents(localStorage.getItem("currentUser"))
+      .then((res) => {
+        return setMyEvents(res)
+      })
   });
 
   return (

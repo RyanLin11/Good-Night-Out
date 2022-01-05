@@ -43,10 +43,17 @@ const getAllEvents = async () => {
   return body;
 };
 
+const getMyEvents = async (username) => {
+  const response = await fetch("/api/users/" + username + "/participating");
+  const body = await response.json()
+  return body
+}
+
 export default {
   addEvent,
   searchEvents,
   joinEvent,
   deleteEvent,
-  getAllEvents
+  getAllEvents,
+  getMyEvents
 };
