@@ -25,7 +25,6 @@ function Events() {
     e.preventDefault();
 
     //Validate and sanitize this data before pushing to db
-    console.log(e.target.elements.isPublic.value);
     const event = {
       name: e.target.elements.name.value,
       date: e.target.elements.date.value,
@@ -34,7 +33,7 @@ function Events() {
       participants: e.target.elements.participants.value,
     };
 
-    await api.addEvent(event);
+    await api.userCreateEvent(localStorage.getItem("currentUser"), event);
     window.location.reload();
 
     toggleAddEvent(false);

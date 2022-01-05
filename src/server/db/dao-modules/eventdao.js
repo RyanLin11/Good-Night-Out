@@ -45,7 +45,7 @@ const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
 		creator: creator._id,
-		is_public: isPublic,
+		is_public: isPublic
 	});
 
 	try {

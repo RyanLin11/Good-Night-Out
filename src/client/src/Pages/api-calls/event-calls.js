@@ -59,6 +59,19 @@ const getMyEvents = async (username) => {
   return body;
 };
 
+const userCreateEvent = async (username, event) => {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(event)
+  };
+
+  console.log()
+  const response = await fetch("/api/users/" + username + "/events", requestOptions)
+  const body = await response.json()
+  return body
+}
+
 export default {
   addEvent,
   searchEvents,
@@ -66,4 +79,5 @@ export default {
   deleteEvent,
   getAllEvents,
   getMyEvents,
+  userCreateEvent
 };

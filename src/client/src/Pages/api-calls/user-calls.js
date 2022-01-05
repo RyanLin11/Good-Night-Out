@@ -20,6 +20,7 @@ const updateUser = async (username, updates) => {
   return body
 }
 
+
 export default {
   getUserInfo,
   updateUser
