@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/navbar/NavBar";
 import "./css/Profile.css";
+import api from './api-calls/user-calls.js'
 
 import { FaPen } from "react-icons/fa";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,50 +15,30 @@ function Profile() {
   const [currentUser, setCurrentUser] = useState("");
   const currUsername = localStorage.getItem("currentUser");
 
-  const currentUserUsername = localStorage
-    .getItem("currentUser")
-    .padEnd(12, ".");
-  console.log(currentUserUsername);
-
-  useEffect(async () => {
-    const response = await fetch("/users/" + currentUserUsername + "/");
-    const body = await response.json();
-    if (response.status !== 200) {
-      throw Error(body);
-    }
-    console.log(body);
-    setCurrentUser(body);
+  useEffect(() => {
+    const user = api.getUserInfo(currUsername)
+    setCurrentUser(user);
   }, []);
 
-  const updateUser = async (updates) => {
-    const requestOptions = {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    };
-    fetch("/users/" + currentUserUsername + "/update", requestOptions)
-      .then((response) => response.json())
-      .then((data) => this.setState({ postId: data.id }));
-    window.location.reload();
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    const updatedUser = null
     if (editMode) {
-      //save changes
-      const username = e.target.elements.username.value;
-      const email = e.target.elements.email.value;
-      const password = e.target.elements.password.value;
-      await updateUser({
-        username,
-        email,
-        password
-      })
+      api.updateUser({
+        username: e.target.elements.username.value,
+        email: e.target.elements.email.value,
+        password: e.target.elements.password.value
+      }).then((res) => updatedUser = res)
+      alert("test")
+      if(updatedUser === {}){
+        alert("Updates were not able to be saved.")
+      } else {
+        alert("Saved Changes!")
+      }
     }
     toggleEditMode(!editMode);
-    //send this info to database as async
 
-    //send alert once data is updated
     navigate("/profile");
   };
 
@@ -76,7 +57,6 @@ function Profile() {
               name="username"
               placeholder={currUsername}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             <label>Email</label>
             <input
@@ -84,7 +64,6 @@ function Profile() {
               name="email"
               placeholder={currentUser.email}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             <label>Password</label>
             <input
@@ -92,7 +71,6 @@ function Profile() {
               name="password"
               placeholder={currentUser.password}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             {editMode ? (
               <button>Save Changes</button>

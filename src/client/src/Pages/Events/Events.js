@@ -5,7 +5,7 @@ import "../css/Events.css";
 import EventList from "./EventList";
 import NavBar from "../../components/navbar/NavBar";
 import { FaSearch } from "react-icons/fa";
-import api from "./events-api-calls/calls.js";
+import api from "../api-calls/event-calls.js";
 
 function Events() {
   // Get current user's events

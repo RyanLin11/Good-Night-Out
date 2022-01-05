@@ -1,3 +1,5 @@
+//convert these to async await 
+
 const addEvent = async (event) => {
   const requestOptions = {
     method: "POST",
@@ -31,23 +33,31 @@ const deleteEvent = async (eventId) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ eventId }),
   };
-  fetch("/events/" + eventId, requestOptions)
+  fetch("/api/events/" + eventId, requestOptions)
     .then((response) => response.json())
     .then((data) => this.setState({ postId: data.id }));
   window.location.reload();
 };
 
 const getAllEvents = async () => {
-  const response = await fetch("/api/events/");
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+  const response = await fetch("/api/events/", requestOptions)
   const body = await response.json();
   return body;
 };
 
 const getMyEvents = async (username) => {
-  const response = await fetch("/api/users/" + username + "/participating");
-  const body = await response.json()
-  return body
-}
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+  const response = await fetch("/api/users/" + username + "/participating", requestOptions);
+  const body = await response.json();
+  return body;
+};
 
 export default {
   addEvent,
@@ -55,5 +65,5 @@ export default {
   joinEvent,
   deleteEvent,
   getAllEvents,
-  getMyEvents
+  getMyEvents,
 };
