@@ -13,11 +13,16 @@ function Profile() {
   const navigate = useNavigate();
   const [editMode, toggleEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
-  const currUsername = localStorage.getItem("currentUser");
 
   useEffect(() => {
-    const user = api.getUserInfo(currUsername)
-    setCurrentUser(user);
+    api.getUserInfo(localStorage.getItem("currentUser"))
+      .then((result) => {
+        console.log(result)
+        return setCurrentUser(result)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   }, []);
 
   const handleSubmit = (e) => {
@@ -39,8 +44,19 @@ function Profile() {
     }
     toggleEditMode(!editMode);
 
+    api.getUserInfo(e.target.elements.username.value)
+      .then((result) => {
+        return setCurrentUser(result)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+
+    localStorage.setItem("currentUser", currentUser.username)
     navigate("/profile");
   };
+
+  console.log(currentUser)
 
   return (
     <>
@@ -48,14 +64,14 @@ function Profile() {
       <div class="container">
         <div className="container__box">
           <h1>
-            Hello, <span>{currUsername}</span>
+            Hello, <span>{currentUser.username}</span>
           </h1>
           <form class="edit-profile-form" onSubmit={handleSubmit}>
             <label>Username</label>
             <input
               type="text"
               name="username"
-              placeholder={currUsername}
+              placeholder={currentUser.username}
               disabled={editMode ? "" : "disabled"}
             ></input>
             <label>Email</label>

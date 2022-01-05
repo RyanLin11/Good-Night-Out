@@ -49,8 +49,7 @@ userRoutes.route("/api/users/:name/").get(async function (req, res) {
 
 userRoutes.route("/api/users/:name").patch(async function (req, res) {
 	const success = await db.users.updateUser(req.params.name, req.body.field, req.body.value);
-	let db_user = null;
-
+  let db_user = null
 	if (success) {
 		db_user = await db.users.getUser(req.params.name);
 	}
