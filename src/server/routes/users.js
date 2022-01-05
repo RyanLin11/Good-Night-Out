@@ -52,7 +52,10 @@ userRoutes.route("/api/users/:name").patch(async function (req, res) {
 	let db_user = null;
 
 	if (success) {
-		db_user = await db.users.getUser(req.params.name);
+		db_user =
+			req.body.field == "username" && req.body.value
+				? await db.users.getUser(req.body.value)
+				: await db.users.getUser(req.params.name);
 	}
 
 	// if it failed, return an empty object
