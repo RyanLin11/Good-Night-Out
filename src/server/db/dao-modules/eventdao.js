@@ -237,6 +237,16 @@ const getParticipants = async (eventId) => {
 	}
 };
 
+/**
+ * Adds a participant to an event.
+ *
+ * Note that if the event already had the specified user,
+ * this function will still return true.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @param username the username of the user to add.
+ * @returns true if the operation was a success, and false otherwise.
+ */
 const addParticipant = async (eventId, username) => {
 	try {
 		const eventToUpdate = await eventDao.Event.findById(eventId)
@@ -254,6 +264,42 @@ const addParticipant = async (eventId, username) => {
 			eventToUpdate.participants.push(user._id);
 			user.participatingIn.push(eventToUpdate._id);
 		}
+
+		await eventToUpdate.save();
+		await user.save();
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
+ * Removes a participant from an event.
+ *
+ * Note that if the event did not have the specified user,
+ * this function will still return true.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @param username the username of the user to remove.
+ * @returns true if the operation was a success, and false otherwise.
+ */
+const removeParticipant = async (eventId, username) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+		const user = await getUser(username);
+
+		eventToUpdate.participants = eventToUpdate.participants.filter((e) => {
+			return e.username != username;
+		});
+
+		user.participatingIn = user.participatingIn.filter((e) => {
+			return e._id != eventId;
+		});
 
 		await eventToUpdate.save();
 		await user.save();
@@ -318,5 +364,6 @@ exports.getEventObj = getEventObj;
 exports.deleteEvent = deleteEvent;
 exports.getParticipants = getParticipants;
 exports.addParticipant = addParticipant;
+exports.removeParticipant = removeParticipant;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

@@ -209,12 +209,23 @@ The event ID parameter is the same as the `ObjectId` string that the object is s
 <br />
 <br />
 
-`function addParticipants(eventId: string, username: string) => boolean`
+`function addParticipant(eventId: string, username: string) => boolean`
 Adds a participant to the specified event.
 
 The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
 Note that this function will also add the event to the user's "participatingIn" field. This function will also check for duplicates, and will not add in case of a duplicate (although the function will still return a success).
+
+Returns a success boolean.
+<br />
+<br />
+
+`function removeParticipant(eventId: string, username: string) => boolean`
+Removes a participant from the specified event.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+
+Note that this function will also remove the event from the user's "participatingIn" field. This function will also check for duplicates, and will do nothing in case of a duplicate (although the function will still return a success).
 
 Returns a success boolean.
 <br />
