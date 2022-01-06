@@ -95,6 +95,37 @@ const updateUser = async (username, field, value) => {
 };
 
 /**
+ * Updates multiple fields from a specific user.
+ *
+ * Ensure that updates is an array with format `[{field: ..., value: ...}, ...]`.
+ *
+ * @param username the user's username.
+ * @param updates the updates to process.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const multiUpdateUser = async (username, updates) => {
+	try {
+		const userToUpdate = await userDao.User.findOne({
+			username: username,
+		})
+			.populate("participatingIn")
+			.exec();
+
+		updates.map((e) => {
+			userToUpdate[e.field] = e.value;
+		});
+
+		await userToUpdate.save();
+
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
  * Deletes a user from the mongoDB database.
  *
  * Note that specifying a user that does not exist will return a `false`.
@@ -246,6 +277,7 @@ const findMatchingUsers = async (searchString) => {
 exports.addUser = addUser;
 exports.addBasicUser = addBasicUser;
 exports.updateUser = updateUser;
+exports.multiUpdateUser = multiUpdateUser;
 exports.getUser = getUser;
 exports.getUserObj = getUserObj;
 exports.getParticipatingIn = getParticipatingIn;
