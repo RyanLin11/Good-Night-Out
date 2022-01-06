@@ -96,15 +96,11 @@ const addBasicEventUsername = async (name, username, isPublic) => {
  * Note that specifying a event that does not exist will return a `false`. Specifying a field that does
  * not exist will also return a `false`.
  *
- * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
- * ! using this function if you are, though. The parameter might change.
- *
  * @param eventId the event's `ObjectId` string.
  * @param field the field to be updated.
  * @param value the new value for the field.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
-//TODO:TEST
 const updateEvent = async (eventId, field, value) => {
 	try {
 		const eventToUpdate = await eventDao.Event.findById(eventId)
@@ -114,6 +110,36 @@ const updateEvent = async (eventId, field, value) => {
 
 		eventToUpdate.field = value;
 		eventToUpdate.save();
+
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
+ * Updates multiple fields from a specific event.
+ *
+ * Ensure that updates is an array with format `[{field: ..., value: ...}, ...]`.
+ *
+ * @param eventId the event's `ObjectId string.
+ * @param updates the updates to process.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const multiUpdateEvent = async (eventId, updates) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+
+		for (const element of updates) {
+			eventToUpdate[element.field] = element.value;
+		}
+
+		await eventToUpdate.save();
 
 		return true;
 	} catch (err) {
@@ -173,7 +199,7 @@ const getEvent = async (eventId) => {
  * @returns the event object, or `null` if one cannot be found.
  */
 //TODO:TEST
-const getEventObj = async (username) => {
+const getEventObj = async (eventId) => {
 	try {
 		const desiredEvent = await eventDao.Event.findById(eventId)
 			.populate("creator", ["-participatingIn", "-interests"])
@@ -182,6 +208,28 @@ const getEventObj = async (username) => {
 			.exec();
 
 		return desiredEvent;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
+ * Retrieves an event's participants.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @returns the array of participant documents, or `null` if error occurred.
+ */
+//TODO: test
+const getParticipants = async (eventId) => {
+	try {
+		const participants = await eventDao.Event.findById(eventId)
+			.populate("participants")
+			.select("participants")
+			.exec();
+
+		return participants.participants;
 	} catch (err) {
 		console.error(err);
 
@@ -236,7 +284,10 @@ exports.deleteEvent = deleteEvent;
 exports.addBasicEvent = addBasicEvent;
 exports.addBasicEventUsername = addBasicEventUsername;
 exports.updateEvent = updateEvent;
+exports.multiUpdateEvent = multiUpdateEvent;
 exports.getEvent = getEvent;
 exports.getEventObj = getEventObj;
+exports.deleteEvent = deleteEvent;
+exports.getParticipants = getParticipants;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

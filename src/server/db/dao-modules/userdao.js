@@ -67,9 +67,6 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  * Note that specifying a user that does not exist will return a `false`. Specifying a field that does
  * not exist will also return a `false`.
  *
- * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
- * ! using this function if you are, though. The parameter might change.
- *
  * @param username the user's username.
  * @param field the field to be updated.
  * @param value the new value for the field.
@@ -95,12 +92,41 @@ const updateUser = async (username, field, value) => {
 };
 
 /**
+ * Updates multiple fields from a specific user.
+ *
+ * Ensure that updates is an array with format `[{field: ..., value: ...}, ...]`.
+ *
+ * @param username the user's username.
+ * @param updates the updates to process.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const multiUpdateUser = async (username, updates) => {
+	try {
+		const userToUpdate = await userDao.User.findOne({
+			username: username,
+		})
+			.populate("participatingIn")
+			.exec();
+
+		for (const element of updates) {
+			userToUpdate[element.field] = element.value;
+		}
+
+		await userToUpdate.save();
+
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
  * Deletes a user from the mongoDB database.
  *
  * Note that specifying a user that does not exist will return a `false`.
  *
- * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
- * ! using this function if you are, though. The parameter might change.
  * @param username the username of the user to find.
  * @returns a boolean, true if this method was successful and false otherwise.
  */
@@ -246,8 +272,10 @@ const findMatchingUsers = async (searchString) => {
 exports.addUser = addUser;
 exports.addBasicUser = addBasicUser;
 exports.updateUser = updateUser;
+exports.multiUpdateUser = multiUpdateUser;
 exports.getUser = getUser;
 exports.getUserObj = getUserObj;
+exports.deleteUser = deleteUser;
 exports.getParticipatingIn = getParticipatingIn;
 exports.getCreatedEvents = getCreatedEvents;
 exports.hasUser = hasUser;

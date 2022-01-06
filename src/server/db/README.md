@@ -18,7 +18,7 @@ Note that `eventSchema (ref)` will be missing `participants?`, and `userSchema (
 
 ### User Schema
 
-```json
+```typescript
 {
     firstname: string,
     lastname: string,
@@ -33,7 +33,7 @@ Note that `eventSchema (ref)` will be missing `participants?`, and `userSchema (
 
 ### Event Schema
 
-```json
+```typescript
 {
   name: string,
   is_public: boolean,
@@ -71,6 +71,22 @@ This will create a new user with only the required information. Useful if you do
 Updates a specific field from a specific user.
 
 Note that specifying a user that does not exist will return a `false`. Specifying a field that does not exist will also return a `false`.
+<br />
+<br />
+
+`function multiUpdateUser(username: string, updates: update[]) => boolean`
+Updates multiple fields from a specific user.
+
+Note that the parameter `updates` should be an array of `update` objects, which looks like:
+
+```typescript
+{
+  field: string,
+  value: string
+}
+```
+
+Returns a success boolean.
 <br />
 <br />
 
@@ -141,6 +157,24 @@ Note that specifying a event that does not exist will return a `false`. Specifyi
 <br />
 <br />
 
+`function multiUpdateEvent(eventId: string, updates: update[]) => boolean`
+Updates multiple fields from a specific event.
+
+Note that the parameter `updates` should be an array of `update` objects, which looks like:
+
+```typescript
+{
+  field: string,
+  value: string
+}
+```
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+
+Returns a success boolean.
+<br />
+<br />
+
 `function deleteEvent(eventId: string) => boolean`
 Deletes a event from the mongoDB database.
 
@@ -165,6 +199,13 @@ Retrieves a event from the mongoDB database given a event's id as a vanilla JS o
 The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
 This will return a vanilla JS object with the same fields as the `eventSchema` schema.
+<br />
+<br />
+
+`function getParticipants(eventId: string) => userSchema[]`
+Retrieves an event's participants.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 <br />
 <br />
 
