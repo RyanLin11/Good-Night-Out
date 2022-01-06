@@ -275,6 +275,7 @@ exports.updateUser = updateUser;
 exports.multiUpdateUser = multiUpdateUser;
 exports.getUser = getUser;
 exports.getUserObj = getUserObj;
+exports.deleteUser = deleteUser;
 exports.getParticipatingIn = getParticipatingIn;
 exports.getCreatedEvents = getCreatedEvents;
 exports.hasUser = hasUser;

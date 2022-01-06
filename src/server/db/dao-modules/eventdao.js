@@ -229,7 +229,7 @@ const getParticipants = async (eventId) => {
 			.select("participants")
 			.exec();
 
-		return participants;
+		return participants.participants;
 	} catch (err) {
 		console.error(err);
 
@@ -283,7 +283,10 @@ exports.addEvent = addEvent;
 exports.addBasicEvent = addBasicEvent;
 exports.addBasicEventUsername = addBasicEventUsername;
 exports.updateEvent = updateEvent;
+exports.multiUpdateEvent = multiUpdateEvent;
 exports.getEvent = getEvent;
 exports.getEventObj = getEventObj;
+exports.deleteEvent = deleteEvent;
+exports.getParticipants = getParticipants;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

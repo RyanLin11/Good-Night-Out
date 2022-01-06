@@ -19,7 +19,7 @@ eventRoutes.route("/api/events/:id").patch(async function (req, res) {
 	if (req.body.updates) {
 		res.json(
 			(await db.events.multiUpdateEvent(req.params.id, req.body.updates))
-				? await db.users.getEvent(req.params.id)
+				? await db.events.getEvent(req.params.id)
 				: {}
 		);
 		return;
@@ -37,9 +37,10 @@ eventRoutes.route("/api/events/:id").patch(async function (req, res) {
 });
 
 eventRoutes.route("/api/events/:id/users").get(async function (req, res) {
-	const eventUsers = await db.events.getParticipatingIn(req.params.id);
-	// if it failed, return an empty object
-	res.json(eventUsers ? eventUsers : {});
+	const eventUsers = await db.events.getParticipants(req.params.id);
+
+	// if it failed, return empty object
+	res.json(eventUsers !== null ? eventUsers : {});
 });
 
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {
