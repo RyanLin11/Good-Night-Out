@@ -203,7 +203,7 @@ const getEvent = async (eventId) => {
  * @returns the event object, or `null` if one cannot be found.
  */
 //TODO:TEST
-const getEventObj = async (username) => {
+const getEventObj = async (eventId) => {
 	try {
 		const desiredEvent = await eventDao.Event.findById(eventId)
 			.populate("creator", ["-participatingIn", "-interests"])
