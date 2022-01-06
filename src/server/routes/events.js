@@ -36,6 +36,12 @@ eventRoutes.route("/api/events/:id").patch(async function (req, res) {
 	res.json(db_event ? db_event : {});
 });
 
+eventRoutes.route("/api/events/:id/users").get(async function (req, res) {
+	const eventUsers = await db.events.getParticipatingIn(req.params.id);
+	// if it failed, return an empty object
+	res.json(eventUsers ? eventUsers : {});
+});
+
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {
 	console.log(`proceed to delete ${req.params.id} on server`);
 	const result = await db.events.deleteEvent(req.params.id);

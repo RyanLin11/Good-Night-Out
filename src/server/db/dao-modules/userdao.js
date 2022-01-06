@@ -67,9 +67,6 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  * Note that specifying a user that does not exist will return a `false`. Specifying a field that does
  * not exist will also return a `false`.
  *
- * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
- * ! using this function if you are, though. The parameter might change.
- *
  * @param username the user's username.
  * @param field the field to be updated.
  * @param value the new value for the field.
@@ -130,8 +127,6 @@ const multiUpdateUser = async (username, updates) => {
  *
  * Note that specifying a user that does not exist will return a `false`.
  *
- * ! Note! I don't know if mongo returns tokens or if we need strings. Will look into accordingly! Please keep
- * ! using this function if you are, though. The parameter might change.
  * @param username the username of the user to find.
  * @returns a boolean, true if this method was successful and false otherwise.
  */

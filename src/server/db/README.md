@@ -202,6 +202,13 @@ This will return a vanilla JS object with the same fields as the `eventSchema` s
 <br />
 <br />
 
+`function getParticipants(eventId: string) => userSchema[]`
+Retrieves an event's participants.
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+<br />
+<br />
+
 `function hasEvent(eventId: string) => boolean`
 Determines if a event by the given event id exists.
 
