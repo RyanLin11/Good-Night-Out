@@ -65,7 +65,9 @@ userRoutes.route("/api/users/:name").patch(async function (req, res) {
 				: {}
 		);
 		return;
-	}
+	} else {
+    
+  }
 
 	res.json(await updateSingleField(req.params.name, req.body.field, req.body.value));
 });

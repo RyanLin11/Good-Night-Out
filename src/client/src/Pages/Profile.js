@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/navbar/NavBar";
 import "./css/Profile.css";
-import api from './api-calls/user-calls.js'
+import api from "./api-calls/user-calls.js";
 
 import { FaPen } from "react-icons/fa";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,48 +15,65 @@ function Profile() {
   const [currentUser, setCurrentUser] = useState("");
 
   useEffect(() => {
-    api.getUserInfo(localStorage.getItem("currentUser"))
+    api
+      .getUserInfo(localStorage.getItem("currentUser"))
       .then((result) => {
-        console.log(result)
-        return setCurrentUser(result)
+        console.log(result);
+        return setCurrentUser(result);
       })
       .catch((e) => {
-        console.log(e)
-      })
+        console.log(e);
+      });
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const updatedUser = null
     if (editMode) {
-      api.updateUser({
-        username: e.target.elements.username.value,
-        email: e.target.elements.email.value,
-        password: e.target.elements.password.value
-      }).then((res) => updatedUser = res)
-      alert("test")
-      if(updatedUser === {}){
-        alert("Updates were not able to be saved.")
+      const updates = [];
+
+      //Filling in updates
+      if (e.target.elements.username.value) {
+        updates.push({
+          field: "username",
+          value: e.target.elements.username.value,
+        });
+      }
+      if (e.target.elements.email.value) {
+        updates.push({ field: "email", value: e.target.elements.email.value });
+      }
+      if (e.target.elements.password.value) {
+        updates.push({
+          field: "password",
+          value: e.target.elements.password.value,
+        });
+      }
+      alert(updates)
+      console.log(updates);
+
+      let updatedUser = null;
+
+      api
+        .updateUser(updates)
+        .then((res) => {
+          console.log(res);
+          updatedUser = res;
+        });
+
+      console.log(updatedUser)
+
+      if (updatedUser === {} || updatedUser === null) {
+        alert("Updates were not able to be saved.");
       } else {
-        alert("Saved Changes!")
+        setCurrentUser(updatedUser);
+        localStorage.setItem("currentUser", updatedUser.username);
+        alert("Saved Changes!");
       }
     }
     toggleEditMode(!editMode);
-
-    api.getUserInfo(e.target.elements.username.value)
-      .then((result) => {
-        return setCurrentUser(result)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-
-    localStorage.setItem("currentUser", currentUser.username)
     navigate("/profile");
   };
 
-  console.log(currentUser)
 
   return (
     <>
