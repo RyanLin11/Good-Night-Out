@@ -27,14 +27,12 @@ const db = require("../db/dao");
 userRoutes.route("/api/users").post(async function (req, res) {
 	let db_user = await db.users.getUser(req.body.username);
 	if (db_user == null) {
-		await db.users.addBasicUser(
+		db_user = await db.users.addBasicUser(
 			req.body.firstname,
 			req.body.lastname,
 			req.body.username,
 			req.body.email
 		);
-
-		db_user = await db.users.getUser(req.body.username);
 	}
 
 	// if it failed, return an empty object
@@ -64,10 +62,9 @@ userRoutes.route("/api/users/:name").patch(async function (req, res) {
 				? await db.users.getUser(newUsername)
 				: {}
 		);
-		return;
+	} else {
+		res.json(await updateSingleField(req.params.name, req.body.field, req.body.value));
 	}
-
-	res.json(await updateSingleField(req.params.name, req.body.field, req.body.value));
 });
 
 // Gets the events that this user is participating in
@@ -86,13 +83,13 @@ userRoutes.route("/api/users/:name/events").get(async function (req, res) {
 
 // this user created a new event
 userRoutes.route("/api/users/:name/events").post(async function (req, res) {
-	const success = await db.events.addBasicEventUsername(
+	const event = await db.events.addBasicEventUsername(
 		req.body.name,
 		req.params.name,
 		req.body.is_public
 	);
 
-	return success ? await db.events.getEvent(req.params.name) : {};
+	res.json(event ? event : {});
 });
 
 module.exports = userRoutes;

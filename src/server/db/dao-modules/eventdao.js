@@ -5,26 +5,33 @@ const { getUser, getUserObj } = require("./userdao");
 /**
  * Adds a new event to the mongoDB database.
  *
- * The specified event must be in the form specified by the common event schema in schema.ts.
+ * The specified event must be in the form specified by the common event schema.
+ *
+ * @deprecated
+ * Consider using {@link addBasicEvent} instead. This function expects user documents
+ * inside the object, but it is simply easier to use {@link addBasicEvent} and then
+ * {@link multiUpdateEvent} to fill in the other fields.
  *
  * Consider using {@link addBasicEvent} if a bare-bones event is needed without any optional fields. Additionally,
  * this will ensure that the most recent schema is used.
  *
  * @param event the event object containing all information about the new event.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  *
  * ! I don't know if this will update a event or create a new event. I will Update accordingly.
  */
 const addEvent = async (event) => {
 	const newEvent = new eventDao.Event({ ...event });
 	try {
-		await newEvent.save();
+		newEvent.participants.push(event.creator._id);
+		creator.participatingIn.push(newEvent._id);
 
-		return true;
+		await event.creator.save();
+		return await newEvent.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -39,23 +46,26 @@ const addEvent = async (event) => {
  * @param name the name of the event.
  * @param creator the document with the creator of the event.
  * @param isPublic whether the event is public or not.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  */
 const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
 		creator: creator._id,
 		is_public: isPublic,
+		participants: [],
 	});
 
 	try {
-		await newEvent.save();
+		newEvent.participants.push(creator._id);
+		creator.participatingIn.push(newEvent._id);
 
-		return true;
+		await creator.save();
+		return await newEvent.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -72,7 +82,7 @@ const addBasicEvent = async (name, creator, isPublic) => {
  * @param name the name of the event.
  * @param creator the username of the creator
  * @param isPublic whether the event is public or not.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  */
 const addBasicEventUsername = async (name, username, isPublic) => {
 	try {
@@ -82,11 +92,11 @@ const addBasicEventUsername = async (name, username, isPublic) => {
 			return addBasicEvent(name, user, isPublic);
 		}
 
-		return false;
+		return null;
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 

@@ -125,26 +125,36 @@ Given a substring, finds users with a username/name with the substring.
 
 Note that any fields specifying ObjectID refers to [BSON/MongoDB ObjectId](https://docs.mongodb.com/manual/reference/method/ObjectId/).
 
-`function addEvent(event: eventSchema) => boolean`
+`@deprecated`
+`function addEvent(event: eventSchema) => eventSchema`
 Adds a new event to the mongoDB database.
 
 The specified event must be in the form specified by the common event schema in schema.ts. It must be a vanilla JS object.
+
+Consider using `addBasicEvent` instead. This function expects user documents inside the object, but it is simply easier to use `addBasicEvent` and then `multiUpdateEvent` to fill in the other fields.
+
+Will return the new event, or `null` if something failed.
+
 <br />
 <br />
 
-`function addBasicEvent(name: string, creator: userSchema, isPublic: boolean) => boolean`
+`function addBasicEvent(name: string, creator: userSchema, isPublic: boolean) => eventSchema`
 Adds a new event object to the mongoDB database.
 
 This will create a new event with only the required information. Useful if you don't want to make objects. Will also ensure the most recent schema is used.
 
 Creator must be a `mongoose.document` with the `userSchema` as its schema.
+
+Will return the new event, or `null` if something failed.
 <br />
 <br />
 
-`function addBasicEventUsername(name: string, creator: string, isPublic: boolean) => boolean`
+`function addBasicEventUsername(name: string, creator: string, isPublic: boolean) => eventSchema`
 Adds a new event object to the mongoDB database.
 
 The only difference between this and `addBasicEvent` is that this accepts a username for creator.
+
+Will return the new event, or `null` if something failed.
 <br />
 <br />
 

@@ -4,13 +4,13 @@ const eventDao = require("../models/event");
 /**
  * Adds a new user object to the mongoDB database.
  *
- * The specified user must be in the form specified by the common user schema in schema.ts.
+ * The specified user must be in the form specified by the common user schema.
  *
  * Consider using {@link addBasicUser} if a bare-bones user is needed without any optional fields. Additionally,
  * this will ensure that the most recent schema is used.
  *
  * @param userObj the user object in the form of {@link user.userSchema userSchema}.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the saved document, or `null` if something went wrong.
  *
  * ! I don't know if this will update a user or create a new user. I will Update accordingly.
  */
@@ -18,13 +18,11 @@ const addUser = async (userObj) => {
 	const newUser = userDao.User({ ...userObj });
 
 	try {
-		await newUser.save();
-
-		return true;
+		return newUser.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -40,7 +38,7 @@ const addUser = async (userObj) => {
  * @param lastname the last name of the new user.
  * @param username the username of the new user.
  * @param email the email of the new user.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the saved document, or `null` if something went wrong.
  */
 const addBasicUser = async (firstname, lastname, username, email) => {
 	const newUser = new userDao.User({
@@ -51,13 +49,11 @@ const addBasicUser = async (firstname, lastname, username, email) => {
 	});
 
 	try {
-		await newUser.save();
-
-		return true;
+		return await newUser.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
