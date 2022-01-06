@@ -165,6 +165,28 @@ const getUser = async (username) => {
 };
 
 /**
+ * Retrieves a user from the mongoDB database given a username.
+ *
+ * This will NOT populate any fields.
+ *
+ * @param username the username of the user to find.
+ * @returns the document with the user, or `null` if one cannot be found.
+ */
+const getRawUser = async (username) => {
+	try {
+		const desiredUser = await userDao.User.findOne({
+			username: username,
+		}).exec();
+
+		return desiredUser;
+	} catch (err) {
+		console.error(err);
+
+		return null;
+	}
+};
+
+/**
  * Retrieves a user from the mongoDB database given a username as a vanilla JS object.
  *
  * The user will have the same fields, but will be returned as a vanilla object.

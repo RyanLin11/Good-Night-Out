@@ -1,6 +1,6 @@
 const { users } = require("../dao");
 const eventDao = require("../models/event");
-const { getUser } = require("./userdao");
+const { getUser, getUserObj } = require("./userdao");
 
 /**
  * Adds a new event to the mongoDB database.
@@ -45,7 +45,7 @@ const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
 		creator: creator._id,
-		is_public: isPublic
+		is_public: isPublic,
 	});
 
 	try {
@@ -108,8 +108,8 @@ const updateEvent = async (eventId, field, value) => {
 			.populate("participants")
 			.exec();
 
-		eventToUpdate.field = value;
-		eventToUpdate.save();
+		eventToUpdate[field] = value;
+		await eventToUpdate.save();
 
 		return true;
 	} catch (err) {
@@ -237,6 +237,34 @@ const getParticipants = async (eventId) => {
 	}
 };
 
+const addParticipant = async (eventId, username) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+
+		const user = await getUser(username);
+
+		const hasUser = eventToUpdate.participants.find((e) => {
+			return e.username == username;
+		});
+
+		if (!hasUser) {
+			eventToUpdate.participants.push(user._id);
+			user.participatingIn.push(eventToUpdate._id);
+		}
+
+		await eventToUpdate.save();
+		await user.save();
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
 /**
  * Determines if a event by the given event id exists.
  *
@@ -289,5 +317,6 @@ exports.getEvent = getEvent;
 exports.getEventObj = getEventObj;
 exports.deleteEvent = deleteEvent;
 exports.getParticipants = getParticipants;
+exports.addParticipant = addParticipant;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

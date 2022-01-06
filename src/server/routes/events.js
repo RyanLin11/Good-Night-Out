@@ -43,6 +43,18 @@ eventRoutes.route("/api/events/:id/users").get(async function (req, res) {
 	res.json(eventUsers !== null ? eventUsers : {});
 });
 
+eventRoutes.route("/api/events/:id/users").post(async function (req, res) {
+	// empty object for fail
+	if (!req.body.username) {
+		res.json({});
+		return;
+	}
+
+	const success = await db.events.addParticipant(req.params.id, req.body.username);
+
+	res.json(success ? await db.events.getEvent(req.params.id) : {});
+});
+
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {
 	console.log(`proceed to delete ${req.params.id} on server`);
 	const result = await db.events.deleteEvent(req.params.id);
