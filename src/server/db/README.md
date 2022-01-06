@@ -157,6 +157,24 @@ Note that specifying a event that does not exist will return a `false`. Specifyi
 <br />
 <br />
 
+`function multiUpdateEvent(eventId: string, updates: update[]) => boolean`
+Updates multiple fields from a specific event.
+
+Note that the parameter `updates` should be an array of `update` objects, which looks like:
+
+```typescript
+{
+  field: string,
+  value: string
+}
+```
+
+The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
+
+Returns a success boolean.
+<br />
+<br />
+
 `function deleteEvent(eventId: string) => boolean`
 Deletes a event from the mongoDB database.
 

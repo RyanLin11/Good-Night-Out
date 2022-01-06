@@ -111,9 +111,9 @@ const multiUpdateUser = async (username, updates) => {
 			.populate("participatingIn")
 			.exec();
 
-		updates.map((e) => {
-			userToUpdate[e.field] = e.value;
-		});
+		for (const element of updates) {
+			userToUpdate[element.field] = element.value;
+		}
 
 		await userToUpdate.save();
 

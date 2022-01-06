@@ -124,6 +124,36 @@ const updateEvent = async (eventId, field, value) => {
 };
 
 /**
+ * Updates multiple fields from a specific event.
+ *
+ * Ensure that updates is an array with format `[{field: ..., value: ...}, ...]`.
+ *
+ * @param eventId the event's `ObjectId string.
+ * @param updates the updates to process.
+ * @returns a boolean, true if this method was successful and false otherwise.
+ */
+const multiUpdateEvent = async (eventId, updates) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+
+		for (const element of updates) {
+			eventToUpdate[element.field] = element.value;
+		}
+
+		await eventToUpdate.save();
+
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
  * Deletes a event from the mongoDB database.
  *
  * Note that specifying a event that does not exist will return a `false`.

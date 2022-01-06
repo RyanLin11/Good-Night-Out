@@ -14,8 +14,17 @@ eventRoutes.route("/api/events/:id").get(async function (req, res) {
 	res.json(event);
 });
 
-//! not tested yet
+//! multiadding not tested yet
 eventRoutes.route("/api/events/:id").patch(async function (req, res) {
+	if (req.body.updates) {
+		res.json(
+			(await db.events.multiUpdateEvent(req.params.id, req.body.updates))
+				? await db.users.getEvent(req.params.id)
+				: {}
+		);
+		return;
+	}
+
 	const success = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
 	let db_event = null;
 
