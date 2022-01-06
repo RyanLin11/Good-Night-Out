@@ -14,11 +14,13 @@ function Profile() {
   const [editMode, toggleEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
 
+  console.log(localStorage.getItem("currentUser"))
+
   useEffect(() => {
     api
       .getUserInfo(localStorage.getItem("currentUser"))
       .then((result) => {
-        console.log(result);
+        console.log(result)
         return setCurrentUser(result);
       })
       .catch((e) => {
@@ -48,30 +50,20 @@ function Profile() {
           value: e.target.elements.password.value,
         });
       }
-      alert(updates)
-      console.log(updates);
 
-      let updatedUser = null;
-
-      api
-        .updateUser(updates)
-        .then((res) => {
-          console.log(res);
-          updatedUser = res;
-        });
-
-      console.log(updatedUser)
-
-      if (updatedUser === {} || updatedUser === null) {
-        alert("Updates were not able to be saved.");
-      } else {
-        setCurrentUser(updatedUser);
-        localStorage.setItem("currentUser", updatedUser.username);
-        alert("Saved Changes!");
-      }
+      api.updateUser(currentUser.username, {updates: updates})
+        .then((response) => {
+          if(response === {}){
+            return alert("Updates could not be saved.")
+          } else {
+            setCurrentUser(response)
+            localStorage.setItem("currentUser", response.username)
+            alert("Saved Changes!")
+            return navigate("/eventlist")
+          }
+        })
     }
     toggleEditMode(!editMode);
-    navigate("/profile");
   };
 
 

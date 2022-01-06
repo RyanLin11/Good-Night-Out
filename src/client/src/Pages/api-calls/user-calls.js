@@ -3,7 +3,7 @@ const getUserInfo = async (username) => {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   };
-  const response = await fetch("/api/users/" + username, requestOptions);
+  const response = await fetch("/api/users/" + username + "/", requestOptions);
   const body = await response.json();
   return body
 };
@@ -17,7 +17,7 @@ const updateUser = async (username, updates) => {
   };
   const response = await fetch("/api/users/" + username, requestOptions)
   const body = await response.json()
-
+  console.log(body)
   return body
 }
 

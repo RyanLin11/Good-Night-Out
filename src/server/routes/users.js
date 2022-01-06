@@ -41,11 +41,12 @@ userRoutes.route("/api/users").post(async function (req, res) {
 
 userRoutes.route("/api/users/:name/").get(async function (req, res) {
 	const user = await db.users.getUser(req.params.name);
-
+  console.log(user)
 	res.json(user);
 });
 
 userRoutes.route("/api/users/:name").patch(async function (req, res) {
+  console.log("updating user")
 	if (req.body.updates) {
 		// check to see if the username was updated
 		//TODO: is it time to retire the success boolean?
@@ -60,9 +61,11 @@ userRoutes.route("/api/users/:name").patch(async function (req, res) {
 		res.json(
 			(await db.users.multiUpdateUser(req.params.name, req.body.updates))
 				? await db.users.getUser(newUsername)
-				: {}
+				: {"test":"hello"}
 		);
-	} else {
+    return;
+	} 
+  else {
 		res.json(await updateSingleField(req.params.name, req.body.field, req.body.value));
 	}
 });
