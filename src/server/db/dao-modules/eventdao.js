@@ -1,30 +1,37 @@
 const { users } = require("../dao");
 const eventDao = require("../models/event");
-const { getUser } = require("./userdao");
+const { getUser, getUserObj } = require("./userdao");
 
 /**
  * Adds a new event to the mongoDB database.
  *
- * The specified event must be in the form specified by the common event schema in schema.ts.
+ * The specified event must be in the form specified by the common event schema.
+ *
+ * @deprecated
+ * Consider using {@link addBasicEvent} instead. This function expects user documents
+ * inside the object, but it is simply easier to use {@link addBasicEvent} and then
+ * {@link multiUpdateEvent} to fill in the other fields.
  *
  * Consider using {@link addBasicEvent} if a bare-bones event is needed without any optional fields. Additionally,
  * this will ensure that the most recent schema is used.
  *
  * @param event the event object containing all information about the new event.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  *
  * ! I don't know if this will update a event or create a new event. I will Update accordingly.
  */
 const addEvent = async (event) => {
 	const newEvent = new eventDao.Event({ ...event });
 	try {
-		await newEvent.save();
+		newEvent.participants.push(event.creator._id);
+		creator.participatingIn.push(newEvent._id);
 
-		return true;
+		await event.creator.save();
+		return await newEvent.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -39,23 +46,26 @@ const addEvent = async (event) => {
  * @param name the name of the event.
  * @param creator the document with the creator of the event.
  * @param isPublic whether the event is public or not.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  */
 const addBasicEvent = async (name, creator, isPublic) => {
 	const newEvent = new eventDao.Event({
 		name: name,
 		creator: creator._id,
-		is_public: isPublic
+		is_public: isPublic,
+		participants: [],
 	});
 
 	try {
-		await newEvent.save();
+		newEvent.participants.push(creator._id);
+		creator.participatingIn.push(newEvent._id);
 
-		return true;
+		await creator.save();
+		return await newEvent.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -72,7 +82,7 @@ const addBasicEvent = async (name, creator, isPublic) => {
  * @param name the name of the event.
  * @param creator the username of the creator
  * @param isPublic whether the event is public or not.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the new event, or `null` if something failed.
  */
 const addBasicEventUsername = async (name, username, isPublic) => {
 	try {
@@ -82,11 +92,11 @@ const addBasicEventUsername = async (name, username, isPublic) => {
 			return addBasicEvent(name, user, isPublic);
 		}
 
-		return false;
+		return null;
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -108,8 +118,8 @@ const updateEvent = async (eventId, field, value) => {
 			.populate("participants")
 			.exec();
 
-		eventToUpdate.field = value;
-		eventToUpdate.save();
+		eventToUpdate[field] = value;
+		await eventToUpdate.save();
 
 		return true;
 	} catch (err) {
@@ -238,6 +248,80 @@ const getParticipants = async (eventId) => {
 };
 
 /**
+ * Adds a participant to an event.
+ *
+ * Note that if the event already had the specified user,
+ * this function will still return true.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @param username the username of the user to add.
+ * @returns true if the operation was a success, and false otherwise.
+ */
+const addParticipant = async (eventId, username) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+
+		const user = await getUser(username);
+
+		const hasUser = eventToUpdate.participants.find((e) => {
+			return e.username == username;
+		});
+
+		if (!hasUser) {
+			eventToUpdate.participants.push(user._id);
+			user.participatingIn.push(eventToUpdate._id);
+		}
+
+		await eventToUpdate.save();
+		await user.save();
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
+ * Removes a participant from an event.
+ *
+ * Note that if the event did not have the specified user,
+ * this function will still return true.
+ *
+ * @param eventId the `ObjectId` string for the event.
+ * @param username the username of the user to remove.
+ * @returns true if the operation was a success, and false otherwise.
+ */
+const removeParticipant = async (eventId, username) => {
+	try {
+		const eventToUpdate = await eventDao.Event.findById(eventId)
+			.populate("creator")
+			.populate("participants")
+			.exec();
+		const user = await getUser(username);
+
+		eventToUpdate.participants = eventToUpdate.participants.filter((e) => {
+			return e.username != username;
+		});
+
+		user.participatingIn = user.participatingIn.filter((e) => {
+			return e._id != eventId;
+		});
+
+		await eventToUpdate.save();
+		await user.save();
+		return true;
+	} catch (err) {
+		console.error(err);
+
+		return false;
+	}
+};
+
+/**
  * Determines if a event by the given event id exists.
  *
  * Note that this function, internally, calls {@link getEvent}. Avoid calling this
@@ -289,5 +373,7 @@ exports.getEvent = getEvent;
 exports.getEventObj = getEventObj;
 exports.deleteEvent = deleteEvent;
 exports.getParticipants = getParticipants;
+exports.addParticipant = addParticipant;
+exports.removeParticipant = removeParticipant;
 exports.hasEvent = hasEvent;
 exports.findMatchingEvents = findMatchingEvents;

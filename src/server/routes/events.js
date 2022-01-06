@@ -1,7 +1,6 @@
 const express = require("express");
 const eventRoutes = express.Router();
 const db = require("../db/dao");
-const { ObjectId } = require("mongodb");
 
 eventRoutes.route("/api/events/").get(async function (req, res) {
 	const events = await db.events.findMatchingEvents("");
@@ -22,18 +21,17 @@ eventRoutes.route("/api/events/:id").patch(async function (req, res) {
 				? await db.events.getEvent(req.params.id)
 				: {}
 		);
-		return;
+	} else {
+		const success = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
+		let db_event = null;
+
+		if (success) {
+			db_event = await db.events.getEvent(req.params.id);
+		}
+
+		// if it failed, return an empty object
+		res.json(db_event ? db_event : {});
 	}
-
-	const success = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
-	let db_event = null;
-
-	if (success) {
-		db_event = await db.events.getEvent(req.params.id);
-	}
-
-	// if it failed, return an empty object
-	res.json(db_event ? db_event : {});
 });
 
 eventRoutes.route("/api/events/:id/users").get(async function (req, res) {
@@ -41,6 +39,30 @@ eventRoutes.route("/api/events/:id/users").get(async function (req, res) {
 
 	// if it failed, return empty object
 	res.json(eventUsers !== null ? eventUsers : {});
+});
+
+eventRoutes.route("/api/events/:id/users").post(async function (req, res) {
+	// empty object for fail
+	if (!req.body.username) {
+		res.json({});
+		return;
+	}
+
+	const success = await db.events.addParticipant(req.params.id, req.body.username);
+
+	res.json(success ? await db.events.getEvent(req.params.id) : {});
+});
+
+eventRoutes.route("/api/events/:id/users").delete(async function (req, res) {
+	// empty object for fail
+	if (!req.body.username) {
+		res.json({});
+		return;
+	}
+
+	const success = await db.events.removeParticipant(req.params.id, req.body.username);
+
+	res.json(success ? await db.events.getEvent(req.params.id) : {});
 });
 
 eventRoutes.route("/api/events/:id").delete(async function (req, res) {
