@@ -1,4 +1,3 @@
-const { users } = require("../dao");
 const eventDao = require("../models/event");
 const { getUser, getUserObj } = require("./userdao");
 
@@ -109,8 +108,9 @@ const addBasicEventUsername = async (name, username, isPublic) => {
  * @param eventId the event's `ObjectId` string.
  * @param field the field to be updated.
  * @param value the new value for the field.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the updated event, or `null` otherwise.
  */
+//TODO: test
 const updateEvent = async (eventId, field, value) => {
 	try {
 		const eventToUpdate = await eventDao.Event.findById(eventId)
@@ -119,13 +119,11 @@ const updateEvent = async (eventId, field, value) => {
 			.exec();
 
 		eventToUpdate[field] = value;
-		await eventToUpdate.save();
-
-		return true;
+		return await eventToUpdate.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -136,8 +134,9 @@ const updateEvent = async (eventId, field, value) => {
  *
  * @param eventId the event's `ObjectId string.
  * @param updates the updates to process.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the updated event, or `null` otherwise.
  */
+//TODO: test
 const multiUpdateEvent = async (eventId, updates) => {
 	try {
 		const eventToUpdate = await eventDao.Event.findById(eventId)
@@ -149,13 +148,11 @@ const multiUpdateEvent = async (eventId, updates) => {
 			eventToUpdate[element.field] = element.value;
 		}
 
-		await eventToUpdate.save();
-
-		return true;
+		return await eventToUpdate.save();
 	} catch (err) {
 		console.error(err);
 
-		return false;
+		return null;
 	}
 };
 

@@ -158,16 +158,18 @@ Will return the new event, or `null` if something failed.
 <br />
 <br />
 
-`function updateEvent(eventId: string, field: string, value: any) => boolean`
+`function updateEvent(eventId: string, field: string, value: any) => userSchema`
 Updates a specific field from a specific event.
 
 The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
 Note that specifying a event that does not exist will return a `false`. Specifying a field that does not exist will also return a `false`.
+
+Returns the updated event, or `null` if something failed.
 <br />
 <br />
 
-`function multiUpdateEvent(eventId: string, updates: update[]) => boolean`
+`function multiUpdateEvent(eventId: string, updates: update[]) => userSchema`
 Updates multiple fields from a specific event.
 
 Note that the parameter `updates` should be an array of `update` objects, which looks like:
@@ -181,7 +183,7 @@ Note that the parameter `updates` should be an array of `update` objects, which 
 
 The event ID parameter is the same as the `ObjectId` string that the object is stored under in the MongoDB.
 
-Returns a success boolean.
+Returns the updated event, or `null` if something failed.
 <br />
 <br />
 

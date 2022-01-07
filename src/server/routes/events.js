@@ -16,21 +16,14 @@ eventRoutes.route("/api/events/:id").get(async function (req, res) {
 //! multiadding not tested yet
 eventRoutes.route("/api/events/:id").patch(async function (req, res) {
 	if (req.body.updates) {
-		res.json(
-			(await db.events.multiUpdateEvent(req.params.id, req.body.updates))
-				? await db.events.getEvent(req.params.id)
-				: {}
-		);
-	} else {
-		const success = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
-		let db_event = null;
+		const dbEvent = await db.events.multiUpdateEvent(req.params.id, req.body.updates);
 
-		if (success) {
-			db_event = await db.events.getEvent(req.params.id);
-		}
+		res.json(dbEvent ? dbEvent : null);
+	} else {
+		const dbEvent = await db.events.updateEvent(req.params.id, req.body.field, req.body.value);
 
 		// if it failed, return an empty object
-		res.json(db_event ? db_event : {});
+		res.json(dbEvent ? dbEvent : {});
 	}
 });
 
