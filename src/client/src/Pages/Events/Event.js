@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Event.css";
 import moment from 'moment'
-import api from './events-api-calls/calls.js'
+import api from '../api-calls/event-calls.js'
 import {FaTrash} from 'react-icons/fa'
 
 function Event({event}) {
@@ -26,14 +26,14 @@ function Event({event}) {
           <div className="description">
             Notes: <span>{event.desc}</span>
           </div>
-          {event.participants !== [] &&
+          {/* {event.participants !== [] &&
           <div className="participants">
             Participants: 
             {event.participants.map((participant) => {
               console.log(participant)
               return <span>{participant.username},</span>;
             })}
-          </div>}
+          </div>} */}
         </div>
       </div>
       <div class="join-delete-buttons">

@@ -5,7 +5,7 @@ import "../css/Events.css";
 import EventList from "./EventList";
 import NavBar from "../../components/navbar/NavBar";
 import { FaSearch } from "react-icons/fa";
-import api from "./events-api-calls/calls.js";
+import api from "../api-calls/event-calls.js";
 
 function Events() {
   // Get current user's events
@@ -13,15 +13,7 @@ function Events() {
   const [showAddEvent, toggleAddEvent] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("/events/");
-      const body = await response.json();
-      if (response.status !== 200) {
-        throw Error(body);
-      }
-      return body
-    };
-    fetchData().then((data) => {
+    api.getAllEvents().then((data) => {
       setUserEvents(data)
     }).catch((e) => {
       console.log(e)
@@ -33,7 +25,6 @@ function Events() {
     e.preventDefault();
 
     //Validate and sanitize this data before pushing to db
-    console.log(e.target.elements.isPublic.value);
     const event = {
       name: e.target.elements.name.value,
       date: e.target.elements.date.value,
@@ -42,7 +33,7 @@ function Events() {
       participants: e.target.elements.participants.value,
     };
 
-    await api.addEvent(event);
+    await api.userCreateEvent(localStorage.getItem("currentUser"), event);
     window.location.reload();
 
     toggleAddEvent(false);
@@ -118,7 +109,6 @@ function Events() {
                 type="text"
                 name="participants"
                 placeholder="Who's coming?"
-                required
               ></input>
             </div>
             <button>Add Your Event</button>

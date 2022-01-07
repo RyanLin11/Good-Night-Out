@@ -36,6 +36,7 @@ const userSchema = mongoose.Schema({
 		trim: true,
 	},
 	interests: [String],
+	participatingIn: [{ type: mongoose.Types.ObjectId, ref: "Event" }],
 });
 
 // for debug, will not be stored on db, prints out event details for debug
@@ -56,5 +57,4 @@ const dummyUser = {
 };
 
 exports.userSchema = userSchema;
-exports.dummyUser = dummyUser;
 exports.User = User;

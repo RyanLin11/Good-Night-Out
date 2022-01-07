@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/navbar/NavBar";
 import "./css/Profile.css";
+import api from "./api-calls/user-calls.js";
 
 import { FaPen } from "react-icons/fa";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,54 +13,59 @@ function Profile() {
   const navigate = useNavigate();
   const [editMode, toggleEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
-  const currUsername = localStorage.getItem("currentUser");
 
-  const currentUserUsername = localStorage
-    .getItem("currentUser")
-    .padEnd(12, ".");
-  console.log(currentUserUsername);
+  console.log(localStorage.getItem("currentUser"))
 
-  useEffect(async () => {
-    const response = await fetch("/users/" + currentUserUsername + "/");
-    const body = await response.json();
-    if (response.status !== 200) {
-      throw Error(body);
-    }
-    console.log(body);
-    setCurrentUser(body);
+  useEffect(() => {
+    api
+      .getUserInfo(localStorage.getItem("currentUser"))
+      .then((result) => {
+        console.log(result)
+        return setCurrentUser(result);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
 
-  const updateUser = async (updates) => {
-    const requestOptions = {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updates),
-    };
-    fetch("/users/" + currentUserUsername + "/update", requestOptions)
-      .then((response) => response.json())
-      .then((data) => this.setState({ postId: data.id }));
-    window.location.reload();
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
     if (editMode) {
-      //save changes
-      const username = e.target.elements.username.value;
-      const email = e.target.elements.email.value;
-      const password = e.target.elements.password.value;
-      await updateUser({
-        username,
-        email,
-        password
-      })
+      const updates = [];
+
+      //Filling in updates
+      if (e.target.elements.username.value) {
+        updates.push({
+          field: "username",
+          value: e.target.elements.username.value,
+        });
+      }
+      if (e.target.elements.email.value) {
+        updates.push({ field: "email", value: e.target.elements.email.value });
+      }
+      if (e.target.elements.password.value) {
+        updates.push({
+          field: "password",
+          value: e.target.elements.password.value,
+        });
+      }
+
+      api.updateUser(currentUser.username, {updates: updates})
+        .then((response) => {
+          if(response === {}){
+            return alert("Updates could not be saved.")
+          } else {
+            setCurrentUser(response)
+            localStorage.setItem("currentUser", response.username)
+            alert("Saved Changes!")
+            return navigate("/eventlist")
+          }
+        })
     }
     toggleEditMode(!editMode);
-    //send this info to database as async
-
-    //send alert once data is updated
-    navigate("/profile");
   };
+
 
   return (
     <>
@@ -67,16 +73,15 @@ function Profile() {
       <div class="container">
         <div className="container__box">
           <h1>
-            Hello, <span>{currUsername}</span>
+            Hello, <span>{currentUser.username}</span>
           </h1>
           <form class="edit-profile-form" onSubmit={handleSubmit}>
             <label>Username</label>
             <input
               type="text"
               name="username"
-              placeholder={currUsername}
+              placeholder={currentUser.username}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             <label>Email</label>
             <input
@@ -84,7 +89,6 @@ function Profile() {
               name="email"
               placeholder={currentUser.email}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             <label>Password</label>
             <input
@@ -92,7 +96,6 @@ function Profile() {
               name="password"
               placeholder={currentUser.password}
               disabled={editMode ? "" : "disabled"}
-              required
             ></input>
             {editMode ? (
               <button>Save Changes</button>
