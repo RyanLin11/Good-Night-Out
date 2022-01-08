@@ -79,7 +79,7 @@ const updateUser = async (username, field, value) => {
 		userToUpdate[field] = value;
 		return await userToUpdate.save();
 	} catch (err) {
-		// console.error(err);
+		console.error(err);
 
 		return null;
 	}
@@ -108,7 +108,7 @@ const multiUpdateUser = async (username, updates) => {
 
 		return await userToUpdate.save();
 	} catch (err) {
-		// console.error(err);
+		console.error(err);
 
 		return null;
 	}
