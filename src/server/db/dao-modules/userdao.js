@@ -20,7 +20,7 @@ const addUser = async (userObj) => {
 	try {
 		return newUser.save();
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -51,7 +51,7 @@ const addBasicUser = async (firstname, lastname, username, email) => {
 	try {
 		return await newUser.save();
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -81,7 +81,7 @@ const updateUser = async (username, field, value) => {
 
 		return true;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return false;
 	}
@@ -112,7 +112,7 @@ const multiUpdateUser = async (username, updates) => {
 
 		return true;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return false;
 	}
@@ -121,7 +121,7 @@ const multiUpdateUser = async (username, updates) => {
 /**
  * Deletes a user from the mongoDB database.
  *
- * Note that specifying a user that does not exist will return a `false`.
+ * Note that specifying a user that does not exist will return a `true`.
  *
  * @param username the username of the user to find.
  * @returns a boolean, true if this method was successful and false otherwise.
@@ -132,7 +132,7 @@ const deleteUser = async (username) => {
 
 		return true;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return false;
 	}
@@ -154,7 +154,7 @@ const getUser = async (username) => {
 
 		return desiredUser;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -176,7 +176,7 @@ const getRawUser = async (username) => {
 
 		return desiredUser;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -200,7 +200,7 @@ const getUserObj = async (username) => {
 
 		return desiredUser;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -235,7 +235,7 @@ const getParticipatingIn = async (username) => {
 
 		return desiredEvents.participatingIn;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -253,7 +253,7 @@ const getCreatedEvents = async (username) => {
 
 		return await eventDao.Event.find({ creator: user._id }).exec();
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}
@@ -281,7 +281,7 @@ const findMatchingUsers = async (searchString) => {
 
 		return desiredUsers;
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 
 		return null;
 	}

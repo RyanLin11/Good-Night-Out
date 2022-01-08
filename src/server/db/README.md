@@ -93,7 +93,7 @@ Returns a success boolean.
 `function deleteUser(username: string) => boolean`
 Deletes a user from the mongoDB database.
 
-Note that specifying a user that does not exist will return a `false`.
+Note that specifying a user that does not exist will return a `true`.
 <br />
 <br />
 
