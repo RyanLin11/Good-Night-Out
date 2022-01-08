@@ -67,14 +67,14 @@ This will create a new user with only the required information. Useful if you do
 <br />
 <br />
 
-`function updateUser(username: string, field: string, value: any) => boolean`
+`function updateUser(username: string, field: string, value: any) => userSchema`
 Updates a specific field from a specific user.
 
-Note that specifying a user that does not exist will return a `false`. Specifying a field that does not exist will also return a `false`.
+Will return the updated user. Note that specifying a field that does not exist will return a `null`.
 <br />
 <br />
 
-`function multiUpdateUser(username: string, updates: update[]) => boolean`
+`function multiUpdateUser(username: string, updates: update[]) => userSchema`
 Updates multiple fields from a specific user.
 
 Note that the parameter `updates` should be an array of `update` objects, which looks like:
@@ -86,7 +86,7 @@ Note that the parameter `updates` should be an array of `update` objects, which 
 }
 ```
 
-Returns a success boolean.
+Will return the updated user. Note that specifying a field that does not exist will return a `null`.
 <br />
 <br />
 

@@ -66,7 +66,7 @@ const addBasicUser = async (firstname, lastname, username, email) => {
  * @param username the user's username.
  * @param field the field to be updated.
  * @param value the new value for the field.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the updated user if successful, or null otherwise.
  */
 const updateUser = async (username, field, value) => {
 	try {
@@ -77,13 +77,11 @@ const updateUser = async (username, field, value) => {
 			.exec();
 
 		userToUpdate[field] = value;
-		await userToUpdate.save();
-
-		return true;
+		return await userToUpdate.save();
 	} catch (err) {
 		// console.error(err);
 
-		return false;
+		return null;
 	}
 };
 
@@ -94,7 +92,7 @@ const updateUser = async (username, field, value) => {
  *
  * @param username the user's username.
  * @param updates the updates to process.
- * @returns a boolean, true if this method was successful and false otherwise.
+ * @returns the updated user if successful, or null otherwise.
  */
 const multiUpdateUser = async (username, updates) => {
 	try {
@@ -108,13 +106,11 @@ const multiUpdateUser = async (username, updates) => {
 			userToUpdate[element.field] = element.value;
 		}
 
-		await userToUpdate.save();
-
-		return true;
+		return await userToUpdate.save();
 	} catch (err) {
 		// console.error(err);
 
-		return false;
+		return null;
 	}
 };
 

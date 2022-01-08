@@ -48,22 +48,13 @@ userRoutes.route("/api/users/:name/").get(async function (req, res) {
 userRoutes.route("/api/users/:name").patch(async function (req, res) {
 	if (req.body.updates) {
 		// check to see if the username was updated
-		//TODO: is it time to retire the success boolean?
-		let newUsername = req.params.name;
-
-		for (const element of req.body.updates) {
-			if (element.field == "username" && element.value) {
-				newUsername = element.value;
-			}
-		}
-
-		res.json(
-			(await db.users.multiUpdateUser(req.params.name, req.body.updates))
-				? await db.users.getUser(newUsername)
-				: {}
-		);
+		const dbUser = await db.users.multiUpdateUser(req.params.name, req.body.updates);
+		res.json(dbUser ? dbUser : {});
 	} else {
-		res.json(await updateSingleField(req.params.name, req.body.field, req.body.value));
+		const dbUser = await db.users.updateUser(nameOfUser, field, value);
+
+		// if it failed, return an empty object
+		res.json(dbUser ? dbUser : {});
 	}
 });
 
@@ -93,18 +84,3 @@ userRoutes.route("/api/users/:name/events").post(async function (req, res) {
 });
 
 module.exports = userRoutes;
-
-async function updateSingleField(nameOfUser, field, value) {
-	const success = await db.users.updateUser(nameOfUser, field, value);
-	let db_user = null;
-
-	if (success) {
-		db_user =
-			field == "username" && value
-				? await db.users.getUser(value)
-				: await db.users.getUser(nameOfUser);
-	}
-
-	// if it failed, return an empty object
-	return db_user ? db_user : {};
-}
