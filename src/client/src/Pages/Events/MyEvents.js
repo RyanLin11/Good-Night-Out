@@ -18,7 +18,9 @@ function MyEvents() {
         }
         return setMyEvents(res)
       })
-  });
+  }, []);
+
+  console.log(myEvents)
 
   return (
     <div class="event-list">
@@ -27,7 +29,7 @@ function MyEvents() {
         <h1>My Events</h1>
       </header>
       <div class="upcoming-events">
-        {myEvents === [] ? (
+        {myEvents ? (
           <div>
             {myEvents.map((event) => {
               return <Event event={event} />;

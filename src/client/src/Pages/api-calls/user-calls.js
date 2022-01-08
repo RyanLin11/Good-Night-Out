@@ -17,7 +17,7 @@ const updateUser = async (username, updates) => {
   };
   const response = await fetch("/api/users/" + username, requestOptions)
   const body = await response.json()
-  console.log(body)
+  
   return body
 }
 
