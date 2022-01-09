@@ -116,6 +116,7 @@ describe("#user-dao", function () {
 				.to.be.a("object")
 				.and.to.have.nested.include({ "participatingIn[0].name": eventName });
 		});
+		it("should check if a user exists");
 
 		after("delete test users", async () => {
 			await db.users.deleteUser(username);
