@@ -9,6 +9,9 @@ const username4 = "mocha-test4" + crypto.createHash("md5").update("mochatest-4")
 const firstname = "mocha";
 const lastname = "mochest";
 const email = "mocha-email@mocha.com";
+const fromLocation = "mochaland";
+const aboutDescription = "a test";
+const eventName = "mochatest";
 
 describe("#user-dao", function () {
 	context("with basic users", () => {
@@ -59,6 +62,63 @@ describe("#user-dao", function () {
 			const success = await db.users.deleteUser(username);
 
 			expect(success).to.be.true;
+		});
+	});
+
+	context("getting users and fields", async () => {
+		before("initialize users", async () => {
+			await db.users.addBasicUser(firstname, lastname, username, email);
+			await db.users.multiUpdateUser(username, [
+				{ field: "from", value: fromLocation },
+				{ field: "about", value: aboutDescription },
+				{ field: "participatingIn", value: [] },
+				{ field: "interests", value: ["fun"] },
+			]);
+		});
+
+		it("should get a user", async () => {
+			const user = await db.users.getUser(username);
+
+			expect(user)
+				.to.be.a("object")
+				.and.deep.include({
+					firstname: firstname,
+					lastname: lastname,
+					username: username,
+					email: email,
+					about: aboutDescription,
+					from: fromLocation,
+					interests: ["fun"],
+					participatingIn: [],
+				});
+		});
+		it("should get the user object (as a plain object)", async () => {
+			const user = await db.users.getUserObj(username);
+
+			expect(user)
+				.to.be.a("object")
+				.and.deep.include({
+					firstname: firstname,
+					lastname: lastname,
+					username: username,
+					email: email,
+					about: aboutDescription,
+					from: fromLocation,
+					interests: ["fun"],
+					participatingIn: [],
+				});
+		});
+		it("should get events that a user is participating in", async () => {
+			const event = await db.events.addBasicEventUsername(eventName, username, true);
+			const user = await db.users.getUser(username);
+
+			expect(user)
+				.to.be.a("object")
+				.and.to.have.nested.include({ "participatingIn[0].name": eventName });
+		});
+
+		after("delete test users", async () => {
+			await db.users.deleteUser(username);
 		});
 	});
 
@@ -180,13 +240,6 @@ describe("#user-dao", function () {
 		after("delete temporary user", async () => {
 			await db.users.deleteUser(username);
 		});
-	});
-
-	context("getting users and fields", async () => {
-		it("should get a user", () => {});
-		it("should get events that a user is participating in", () => {});
-		it("should get events that a user created", () => {});
-		it("should get the user object (as a plain object)", () => {});
 	});
 
 	context("finding matching users", async () => {

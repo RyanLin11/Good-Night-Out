@@ -4,7 +4,7 @@
   "description": "The serverside code for Good Night Out",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require 'test/hooks.js'",
+    "test": "mocha --require 'test/hooks.js' --exit",
     "start": "nodemon server.js",
     "build": "cd client && npm install && npm run build"
   },

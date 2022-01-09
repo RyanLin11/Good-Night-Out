@@ -1,7 +1,7 @@
 const db = require("../db/dao");
 
 exports.mochaHooks = {
-	beforeAll() {
+	async beforeAll() {
 		await db.conn.connectToDatabase();
 	},
 };
