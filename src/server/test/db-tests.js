@@ -243,7 +243,7 @@ describe("#user-dao", function () {
 	});
 
 	context("finding matching users", async () => {
-		it("should match all users with an empty string", () => {});
-		it("should match users with a specific string", () => {});
+		it("should match all users with an empty string");
+		it("should match users with a specific string");
 	});
 });
