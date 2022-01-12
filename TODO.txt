@@ -1,5 +1,2 @@
-1. Finish update profile route
-    Should updates be an array of updates or one update
-
-2. Fix Add Event route
-3. Finish All other routes
+1. Implement join Event
+2. Implement a loading screen

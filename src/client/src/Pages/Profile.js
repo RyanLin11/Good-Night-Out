@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/navbar/NavBar";
 import "./css/Profile.css";
-import api from "./api-calls/user-calls.js";
+import api from "../api-calls/user-calls.js";
 
 import { FaPen } from "react-icons/fa";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

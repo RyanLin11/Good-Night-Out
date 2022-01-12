@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import NavBar from "../../components/navbar/NavBar";
 import Event from "./Event.js";
 import "../css/Events.css";
-import api from '../api-calls/event-calls.js'
+import api from '../../api-calls/event-calls.js'
 
 
 function MyEvents() {
