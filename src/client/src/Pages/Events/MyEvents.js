@@ -20,8 +20,6 @@ function MyEvents() {
       })
   }, []);
 
-  console.log(myEvents)
-
   return (
     <div class="event-list">
       <NavBar />

@@ -16,16 +16,15 @@ const searchEvents = async (options) => {
 };
 
 //Fix
-const joinEvent = async (body) => {
+const joinEvent = async (update) => {
   const requestOptions = {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify(update),
   };
-  fetch("/events/" + body.eventid, requestOptions)
-    .then((response) => response.json())
-    .then((data) => this.setState({ postId: data.id }));
-  window.location.reload();
+  const response = await fetch("/api/events/" + update.eventid, requestOptions)
+  const body = await response.json();
+  return body;
 };
 
 const deleteEvent = async (eventId) => {

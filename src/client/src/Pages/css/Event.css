@@ -1,5 +1,5 @@
-.event-container {
-  margin: 20px;
+ .event-container {
+  margin: 20px 50px;
   padding: 15px;
   border: 1px solid black;
   position: relative;
@@ -13,29 +13,27 @@
   display: flex;
 }
 
-.info {
-  display: inline-block;
-  width: 30%;
-  margin-top: 10px;
+.event-title {
+  width: 25%;
+  font-size: 30px;
+  margin: 10px 0px;
 }
 
-.description {
-  display: flex;
+.details {
+  text-align: left;
+  font-size: 20px;
 }
 
-.description span {
-  margin-top: 0%;
+.time {
+  margin: 10px;
+  justify-content: left;
 }
 
-.event-info {
-  display: block;
-  position: relative;
-}
-
-.participants {
-  bottom: 0px;
-  margin-bottom: 0%;
-}
+.join-event {
+  border-radius: 10px;
+  margin-left: 2%;
+  width: 19%
+} 
 
 .delete-button {
   background-color: transparent;
@@ -46,12 +44,4 @@
 
 .delete-button:hover {
   background-color: rgb(187, 187, 187);
-}
-
-.join-event {
-  margin-top: 10px;
-  border-radius: 5px;
-  height:fit-content;
-  margin-left: 2%;
-  width: 7vw;
 }

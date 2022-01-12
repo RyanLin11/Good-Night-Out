@@ -31,7 +31,6 @@ function EventList({ events }) {
   });
   
   return allevents.map((event) => {
-    console.log(event)
     return (
       <div>
         <Event event={event} />

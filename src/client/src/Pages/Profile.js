@@ -14,8 +14,6 @@ function Profile() {
   const [editMode, toggleEditMode] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
 
-  console.log(localStorage.getItem("currentUser"))
-
   useEffect(() => {
     api
       .getUserInfo(localStorage.getItem("currentUser"))
