@@ -232,7 +232,6 @@ const getParticipatingIn = async (username) => {
 			.populate("participatingIn", ["-participants"])
 			.select("participatingIn")
 			.exec();
-
 		return desiredEvents.participatingIn;
 	} catch (err) {
 		console.error(err);
