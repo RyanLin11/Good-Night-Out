@@ -119,10 +119,12 @@ describe("#event-dao", function () {
 		const modifiedIsPublic = false;
 		const modifiedLocation = "notmochaland";
 		let event;
+		let user;
+		let user2;
 
 		before("initialize the creator and event", async () => {
-			const user = await db.users.addBasicUser(firstname, lastname, username, email);
-			const user2 = await db.users.addBasicUser(firstname, lastname, username2, email2);
+			user = await db.users.addBasicUser(firstname, lastname, username, email);
+			user2 = await db.users.addBasicUser(firstname, lastname, username2, email2);
 			event = await db.events.addBasicEvent(eventName, user, isPublic);
 		});
 
@@ -145,8 +147,23 @@ describe("#event-dao", function () {
 				.to.be.an("object")
 				.and.include({ location: modifiedLocation, is_public: modifiedIsPublic });
 		});
-		it("should update the creator field (ref)");
-		it("should update the participants field (ref)");
+		it("should update the creator field (ref)", async () => {
+			await db.events.updateEvent(event._id, "creator", user2._id);
+
+			const newEvent = await db.events.getEvent(event._id);
+
+			expect(newEvent).to.be.an("object").and.have.property("creator");
+			expect(newEvent.creator).to.be.an("object").and.include({username: username2});
+		});
+		it("should update the participants field (ref)", async () => {
+			await db.events.updateEvent(event._id, "participants", [user2._id]);
+
+			const newEvent = await db.events.getEvent(event._id);
+
+			expect(newEvent).to.be.an("object").and.have.property("participants");
+			expect(newEvent.participants).to.be.an("array").and.have.lengthOf(1);
+			expect(newEvent.participants[0]).to.be.an("object").and.include({username: username2});
+		});
 
 		after("delete testing data", async () => {
 			await db.users.deleteUser(username);
