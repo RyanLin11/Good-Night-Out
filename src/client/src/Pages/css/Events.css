@@ -4,30 +4,8 @@ header {
   display: flex;
 }
 
-.addevent-container {
-  background-color: rgb(168, 176, 219);
-  width: 96%;
-  margin: 20px;
-  padding: 15px;
-  border-radius: 10px;
-}
-
-.addevent-form {
-  display: inline;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.addevent-form button{
-  margin-top: 25px;
-  width: 100%
-}
-
 .event-list {
-  position:absolute;
-  background-color: beige;
-  box-sizing: border-box;
-  height: 100%;
+  position: absolute;
   width: 100%;
 }
 
@@ -49,8 +27,30 @@ header {
   margin-top: 10px;
 }
 
+.addevent-container {
+  background-color: rgb(168, 176, 219);
+  padding: 20px;
+  width: 92%;
+  position: relative;
+  left: 3%;
+  justify-content: center;
+  /* width: 100%;
+  margin: 20px 50px;
+  padding: 15px;*/
+  border-radius: 10px;
+}
+.addevent-form {
+  display: inline;
+  width: 100%;
+  margin-top: 20px;
+}
 
-.form__description{
+.addevent-form button {
+  margin-top: 25px;
+  width: 100%;
+}
+
+.form__description {
   margin-right: 10px;
   margin-top: 10px;
   width: 98.5%;

@@ -18,7 +18,7 @@ function Profile() {
     api
       .getUserInfo(localStorage.getItem("currentUser"))
       .then((result) => {
-        console.log(result)
+        console.log(result);
         return setCurrentUser(result);
       })
       .catch((e) => {
@@ -36,7 +36,7 @@ function Profile() {
       if (e.target.elements.username.value) {
         updates.push({
           field: "username",
-          value: e.target.elements.username.value,
+          value: e.target.elements.username.value
         });
       }
       if (e.target.elements.email.value) {
@@ -45,25 +45,25 @@ function Profile() {
       if (e.target.elements.password.value) {
         updates.push({
           field: "password",
-          value: e.target.elements.password.value,
+          value: e.target.elements.password.value
         });
       }
 
-      api.updateUser(currentUser.username, {updates: updates})
+      api
+        .updateUser(currentUser.username, { updates: updates })
         .then((response) => {
-          if(response === {}){
-            return alert("Updates could not be saved.")
+          if (response === {}) {
+            return alert("Updates could not be saved.");
           } else {
-            setCurrentUser(response)
-            localStorage.setItem("currentUser", response.username)
-            alert("Saved Changes!")
-            return navigate("/eventlist")
+            setCurrentUser(response);
+            localStorage.setItem("currentUser", response.username);
+            alert("Saved Changes!");
+            return navigate("/eventlist");
           }
-        })
+        });
     }
     toggleEditMode(!editMode);
   };
-
 
   return (
     <>
@@ -74,6 +74,20 @@ function Profile() {
             Hello, <span>{currentUser.username}</span>
           </h1>
           <form class="edit-profile-form" onSubmit={handleSubmit}>
+            <label>First Name</label>
+            <input
+              type="text"
+              name="password"
+              placeholder={currentUser.firstname}
+              disabled={editMode ? "" : "disabled"}
+            ></input>
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="password"
+              placeholder={currentUser.lastname}
+              disabled={editMode ? "" : "disabled"}
+            ></input>
             <label>Username</label>
             <input
               type="text"
@@ -88,13 +102,13 @@ function Profile() {
               placeholder={currentUser.email}
               disabled={editMode ? "" : "disabled"}
             ></input>
-            <label>Password</label>
+            {/* <label>Password</label>
             <input
               type="text"
               name="password"
               placeholder={currentUser.password}
               disabled={editMode ? "" : "disabled"}
-            ></input>
+            ></input> */}
             {editMode ? (
               <button>Save Changes</button>
             ) : (

@@ -18,11 +18,12 @@ const searchEvents = async (options) => {
 //Fix
 const joinEvent = async (update) => {
   const requestOptions = {
-    method: "PATCH",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(update),
   };
-  const response = await fetch("/api/events/" + update.eventid, requestOptions)
+  const response = await fetch("/api/events/" + update.eventid + "/users", requestOptions)
+  console.log(response)
   const body = await response.json();
   return body;
 };

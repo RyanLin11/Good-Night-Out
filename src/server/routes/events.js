@@ -49,7 +49,6 @@ eventRoutes.route("/api/events/:id/users").post(async function (req, res) {
 	}
 
 	const success = await db.events.addParticipant(req.params.id, req.body.username);
-
 	res.json(success ? await db.events.getEvent(req.params.id) : {});
 });
 

@@ -33,7 +33,7 @@ function EventList({ events }) {
   return allevents.map((event) => {
     return (
       <div>
-        <Event event={event} />
+        <Event event={event} isMyEvents={false}/>
       </div>
     );
   });

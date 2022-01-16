@@ -31,8 +31,34 @@ function Home() {
                 </li>
               </ul>
             </div>
-            <div>image here</div>
-            <img src="" alt="" />
+          </div>
+        </div>
+
+        <div class="info-block" style={{ backgroundColor: "rgb(221, 221, 221)" }}>
+          <h3>
+            This is our project for <span>Project Program</span>
+          </h3>
+          <div className="text">
+            <div>
+              Enjoy!
+              <ul>
+                <li>
+                  Use the <span>MyEvents</span> tab to see the events you've joined or created.
+                </li>
+                <br />
+                <li>
+                  Look at <span>Event List</span> to browse public events.
+                </li>
+                <br />
+                <li>
+                  Check <span>Profile</span> to view/edit your profile
+                </li>
+                <br />
+                <li>
+                  At the end, <span>logout</span>!
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

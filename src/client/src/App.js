@@ -10,18 +10,18 @@ function App() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
+    alert('Auth will be set up shortly! For now, please click signup and enter your information.')
     //authenticate this user to see if we should log them in
-    const user = api
-      .login({
-        username: e.target.elements.username.value,
-        password: e.target.elements.password.value
-      })
-      .catch((e) => {
-        return console.log(e);
-      });
-    this.setState({ currentUser: user });
-    navigate("/home");
+    // const user = api
+    //   .login({
+    //     username: e.target.elements.username.value,
+    //     password: e.target.elements.password.value
+    //   })
+    //   .catch((e) => {
+    //     return console.log(e);
+    //   });
+    // this.setState({ currentUser: user });
+    // navigate("/home");
   };
 
   const handleSignUp = (e) => {
@@ -39,7 +39,7 @@ function App() {
     navigate("/home");
   };
 
-  return false ? (
+  return login ? (
     <div class="container">
       <div class="centered-form">
         <div class="centered-form__box">
