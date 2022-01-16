@@ -2,10 +2,10 @@ const expect = require("chai").expect;
 const crypto = require("crypto");
 const db = require("../db/dao");
 
-const username = "mocha-test1" + crypto.createHash("md5").update("mochatest-1").digest("hex");
-const username2 = "mocha-test2" + crypto.createHash("md5").update("mochatest-2").digest("hex");
-const username3 = "mocha-test3" + crypto.createHash("md5").update("mochatest-3").digest("hex");
-const username4 = "mocha-test4" + crypto.createHash("md5").update("mochatest-4").digest("hex");
+const username = "mocha-test1" + crypto.randomBytes(16).toString("hex");
+const username2 = "mocha-test2" + crypto.randomBytes(16).toString("hex");
+const username3 = "mocha-test3" + crypto.randomBytes(16).toString("hex");
+const username4 = "mocha-test4" + crypto.randomBytes(16).toString("hex");
 const firstname = "mocha";
 const lastname = "mochest";
 const email = "mocha-email@mocha.com";
